@@ -1,0 +1,66 @@
+<main class="user-products-page">
+    <header class="user-products-heading">
+        <p class="eyebrow">The AdornMe collection</p>
+        <h1>Find your finishing touch.</h1>
+        <p>Thoughtful jewellery and accessories designed to stay with you.</p>
+    </header>
+
+    <nav class="category-strip" aria-label="Browse categories">
+        <a routerLink="/products">All pieces</a>
+        @for (category of categories; track category.id) {
+        <a routerLink="/products" [queryParams]="{ categoryId: category.id }">{{ category.name }}</a>
+        }
+    </nav>
+
+    <section class="user-filter-panel" aria-label="Shop filters">
+        <label class="search-field">
+            <span>Search the collection</span>
+            <input type="search" [(ngModel)]="search" placeholder="Search jewellery...">
+        </label>
+        <label>
+            <span>Sort by</span>
+            <select [(ngModel)]="sortBy">
+                <option value="newest">Newest</option>
+                <option value="price">Price</option>
+                <option value="name">Name</option>
+            </select>
+        </label>
+        <button type="button" (click)="applyFilters()">Search collection <span aria-hidden="true">→</span></button>
+    </section>
+
+    @if (errorMessage) {
+    <div class="error" role="alert">{{ errorMessage }}</div>
+    } @else if (isLoading && products.length === 0) {
+    <p class="status">Loading collection...</p>
+    } @else {
+    <div class="user-product-grid">
+        @for (product of products; track product.id) {
+        <a class="user-product-card" [routerLink]="['/products', product.id]">
+            @if (product.imageUrl) {
+            <img [src]="product.imageUrl" [alt]="product.name" width="420" height="300" loading="lazy">
+            } @else {
+            <div class="product-placeholder">AdornMe</div>
+            }
+            <div class="product-info">
+                <span>{{ product.categoryName }}</span>
+                <h2>{{ product.name }}</h2>
+                <div>
+                    <strong>₹{{ product.price }}</strong>
+                    <small>{{ product.stockQuantity > 0 ? 'Available' : 'Sold out' }}</small>
+                </div>
+            </div>
+        </a>
+        }
+    </div>
+
+    @if (products.length === 0) {
+    <p class="status">No products found.</p>
+    }
+
+    <div class="pagination">
+        <button type="button" (click)="previousPage()" [disabled]="pageNumber === 1">Previous</button>
+        <span>Page {{ pageNumber }} of {{ totalPages }}</span>
+        <button type="button" (click)="nextPage()" [disabled]="pageNumber >= totalPages">Next</button>
+    </div>
+    }
+</main>

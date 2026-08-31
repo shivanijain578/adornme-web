@@ -1,0 +1,147 @@
+<div class="product-details-container">
+
+    @if (isLoading) {
+
+    <p>Loading product...</p>
+
+    } @else if (errorMessage) {
+
+    <div class="error">
+        {{ errorMessage }}
+    </div>
+
+    } @else if (product) {
+
+    <div class="product-details">
+
+        <div class="product-image">
+
+            @if (product.imageUrl) {
+
+            <img [src]="product.imageUrl" [alt]="product.name" width="640" height="520">
+
+            } @else {
+
+            <div class="no-image">
+                No Image Available
+            </div>
+
+            }
+
+        </div>
+
+        <div class="product-info">
+
+            <p class="category">
+                {{ product.categoryName }}
+            </p>
+
+            <h1>
+                {{ product.name }}
+            </h1>
+
+            <div class="price-block">
+                @if (product.discountPrice !== undefined && product.discountPrice !== null) {
+                <h2>₹{{ product.discountPrice }}</h2>
+                <del>₹{{ product.price }}</del>
+                } @else {
+                <h2>₹{{ product.price }}</h2>
+                }
+            </div>
+
+            <p class="description">
+                {{ product.description }}
+            </p>
+
+            @if (product.material || product.gender) {
+            <dl class="product-specifications">
+                @if (product.material) {
+                <div>
+                    <dt>Material</dt>
+                    <dd>{{ product.material }}</dd>
+                </div>
+                }
+                @if (product.gender) {
+                <div>
+                    <dt>For</dt>
+                    <dd>{{ product.gender }}</dd>
+                </div>
+                }
+            </dl>
+            }
+
+            <p>
+                Available stock:
+                <strong>
+                    {{ product.stockQuantity }}
+                </strong>
+            </p>
+
+            @if (product.stockQuantity > 0) {
+
+            <button type="button" class="add-cart-button">
+
+                Add to Cart
+
+            </button>
+
+            } @else {
+
+            <button type="button" disabled>
+
+                Out of Stock
+
+            </button>
+
+            }
+
+            @if (isAdmin) {
+            <a class="edit-product-link" [routerLink]="['/admin/products', product.id, 'edit']">
+                Edit product
+            </a>
+            }
+
+            <br>
+
+            <a routerLink="/products" class="back-link">
+
+                ← Back to Products
+
+            </a>
+
+        </div>
+
+    </div>
+
+    }
+
+    @if (product && similarProducts.length > 0) {
+    <section class="similar-products" aria-labelledby="similar-products-title">
+        <div class="similar-heading">
+            <div>
+                <p class="category">More from {{ product.categoryName }}</p>
+                <h2 id="similar-products-title">You may also like.</h2>
+            </div>
+            <a routerLink="/products" [queryParams]="{ categoryId: product.categoryId }">View category →</a>
+        </div>
+
+        <div class="similar-grid">
+            @for (similarProduct of similarProducts; track similarProduct.id) {
+            <a class="similar-card" [routerLink]="['/products', similarProduct.id]">
+                @if (similarProduct.imageUrl) {
+                <img [src]="similarProduct.imageUrl" [alt]="similarProduct.name" width="320" height="220"
+                    loading="lazy">
+                } @else {
+                <div class="similar-placeholder">AdornMe</div>
+                }
+                <div class="similar-card-info">
+                    <h3>{{ similarProduct.name }}</h3>
+                    <strong>₹{{ similarProduct.price }}</strong>
+                </div>
+            </a>
+            }
+        </div>
+    </section>
+    }
+
+</div>

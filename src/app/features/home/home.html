@@ -1,0 +1,79 @@
+<main class="home-page">
+    <section class="home-hero">
+        <div class="hero-copy">
+            <p class="eyebrow">AdornMe studio</p>
+            <h1>Small details.<br>Lasting impression.</h1>
+            <p class="hero-intro">Jewellery and accessories with a quiet point of view, made for the way you move
+                through the world.</p>
+            <a class="hero-cta" routerLink="/products">Explore the collection <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="hero-mark" aria-hidden="true">
+            <span>ADORN</span>
+            <span>ME</span>
+        </div>
+    </section>
+
+    <section class="home-categories" aria-labelledby="category-title">
+        <div class="section-heading">
+            <p class="eyebrow">Browse by mood</p>
+            <h2 id="category-title">Find your kind of detail.</h2>
+        </div>
+        <nav class="category-links" aria-label="Product categories">
+            @if (categories().length === 0 && !isLoading()) {
+            <p class="muted">Categories are coming soon.</p>
+            } @else {
+            @for (category of categories(); track category.id; let index = $index) {
+            <a [routerLink]="['/products']" [queryParams]="{ categoryId: category.id }">
+                <span>0{{ index + 1 }}</span>
+                {{ category.name }}
+                <b aria-hidden="true">↗</b>
+            </a>
+            }
+            }
+        </nav>
+    </section>
+
+    <section class="bestsellers" aria-labelledby="bestseller-title">
+        <div class="section-heading section-heading-row">
+            <div>
+                <p class="eyebrow">The considered edit</p>
+                <h2 id="bestseller-title">Bestsellers.</h2>
+            </div>
+            <a class="text-link" routerLink="/products">View all pieces →</a>
+        </div>
+
+        @if (errorMessage()) {
+        <div class="error" role="alert">{{ errorMessage() }}</div>
+        } @else if (isLoading()) {
+        <p class="muted">Loading the collection...</p>
+        } @else {
+        <div class="home-product-grid">
+            @for (product of bestsellers(); track product.id) {
+            <a class="home-product-card" [routerLink]="['/products/', product.id]">
+                @if (product.imageUrl) {
+                <img [src]="product.imageUrl" [alt]="product.name" width="420" height="300" loading="lazy">
+                } @else {
+                <div class="home-product-placeholder">AdornMe</div>
+                }
+                <div class="home-product-info">
+                    <span>{{ product.categoryName }}</span>
+                    <h3>{{ product.name }}</h3>
+                    @if (product.discountPrice !== undefined && product.discountPrice !== null) {
+                    <strong>₹{{ product.discountPrice }}</strong>
+                    <del>₹{{ product.price }}</del>
+                    } @else {
+                    <strong>₹{{ product.price }}</strong>
+                    }
+                </div>
+            </a>
+            }
+        </div>
+        }
+    </section>
+
+    <section class="home-note">
+        <p class="eyebrow">Made to be noticed</p>
+        <h2>The finishing touch is rarely the loudest one.</h2>
+        <p>Find considered pieces that make an outfit feel unmistakably yours.</p>
+    </section>
+</main>

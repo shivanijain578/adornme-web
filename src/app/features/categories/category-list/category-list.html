@@ -1,0 +1,38 @@
+<main class="category-page">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Admin studio</p>
+            <h1>Categories</h1>
+            <p>Organise the collection into clear, discoverable edits.</p>
+        </div>
+        <a class="primary-link" routerLink="/admin/categories/new">Add category <span aria-hidden="true">+</span></a>
+    </header>
+
+    @if (errorMessage) {
+    <div class="error" role="alert">{{ errorMessage }}</div>
+    }
+
+    @if (isLoading) {
+    <p class="status">Loading categories...</p>
+    } @else if (categories.length === 0) {
+    <section class="empty-state">
+        <h2>No categories yet.</h2>
+        <p>Create the first category for the collection.</p>
+        <a class="primary-link" routerLink="/admin/categories/new">Create category</a>
+    </section>
+    } @else {
+    <section class="category-grid" aria-label="Product categories">
+        @for (category of categories; track category.id; let index = $index) {
+        <article class="category-card">
+            <span class="category-number">0{{ index + 1 }}</span>
+            <h2>{{ category.name }}</h2>
+            <p>{{ category.description || 'No description added.' }}</p>
+            <div class="card-actions">
+                <a [routerLink]="['/admin/categories', category.id, 'edit']">Edit</a>
+                <button type="button" (click)="deleteCategory(category)">Delete</button>
+            </div>
+        </article>
+        }
+    </section>
+    }
+</main>

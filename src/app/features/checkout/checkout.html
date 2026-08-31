@@ -1,0 +1,69 @@
+<main class="checkout-page">
+    <a class="back-link" routerLink="/cart">← Back to cart</a>
+    <header class="checkout-heading">
+        <p class="eyebrow">Complete your order</p>
+        <h1>Checkout.</h1>
+        <p>One last detail, then your pieces are on their way.</p>
+    </header>
+
+    @if (isLoading()) {
+    <p class="status">Preparing checkout...</p>
+    } @else if (errorMessage()) {
+    <div class="error" role="alert">{{ errorMessage() }}</div>
+    } @else if (successMessage()) {
+    <section class="success-message">
+        <h2>Order confirmed.</h2>
+        <p>{{ successMessage() }}</p>
+    </section>
+    } @else if (cart(); as currentCart) {
+    @if (currentCart.items.length === 0) {
+    <section class="empty-checkout">
+        <h2>Your cart is empty.</h2>
+        <a routerLink="/products">Continue shopping →</a>
+    </section>
+    } @else {
+    <div class="checkout-layout">
+        <form class="checkout-form" [formGroup]="checkoutForm" (ngSubmit)="submit()">
+            @if (errorMessage()) {
+            <div class="error" role="alert">{{ errorMessage() }}</div>
+            }
+            <h2>Delivery and payment</h2>
+            <div class="form-group">
+                <label for="address">Delivery address</label>
+                <select id="address" formControlName="addressId">
+                    <option [ngValue]="0">Choose an address</option>
+                    @for (address of addresses(); track address.id) {
+                    <option [ngValue]="address.id">{{ address.fullName }} · {{ address.addressLine1 }},
+                        {{ address.city }}
+                    </option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="payment">Payment method</label>
+                <select id="payment" formControlName="paymentMethod">
+                    <option value="Card">Card</option>
+                    <option value="CashOnDelivery">Cash on delivery</option>
+                </select>
+            </div>
+            <button type="submit" [disabled]="checkoutForm.invalid || isSaving()">
+                {{ isSaving() ? 'Processing...' : 'Place order' }}
+            </button>
+        </form>
+        <aside class="checkout-summary">
+            <p class="eyebrow">Order summary</p>
+            @for (item of currentCart.items; track item.id) {
+            <div class="summary-row">
+                <span>{{ item.productName }} × {{ item.quantity }}</span>
+                <strong>₹{{ item.totalPrice }}</strong>
+            </div>
+            }
+            <div class="summary-total">
+                <span>Total</span>
+                <strong>₹{{ currentCart.totalAmount }}</strong>
+            </div>
+        </aside>
+    </div>
+    }
+    }
+</main>

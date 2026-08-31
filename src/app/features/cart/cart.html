@@ -1,0 +1,48 @@
+<main class="user-page">
+    <p class="eyebrow">Your selection</p>
+    <h1>Cart.</h1>
+    <p class="user-page-copy">Your selected pieces, ready when you are.</p>
+
+    @if (errorMessage()) {
+    <div class="error" role="alert">{{ errorMessage() }}</div>
+    } @else if (isLoading()) {
+    <p class="user-page-copy">Loading your selection...</p>
+    } @else if (cart(); as currentCart) {
+    @if (currentCart.items.length === 0) {
+    <p class="user-page-copy">Your cart is empty. Start with something considered.</p>
+    } @else {
+    <section class="cart-layout">
+        <div class="cart-items">
+            @for (item of currentCart.items; track item.id) {
+            <article class="cart-item">
+                @if (item.imageUrl) {
+                <img [src]="item.imageUrl" [alt]="item.productName" width="150" height="140" loading="lazy">
+                } @else {
+                <div class="cart-placeholder">AdornMe</div>
+                }
+                <div class="cart-item-info">
+                    <h2>{{ item.productName }}</h2>
+                    <p>₹{{ item.unitPrice }} each</p>
+                    <label>Quantity
+                        <input #quantity type="number" min="1" [max]="item.availableStock" [value]="item.quantity"
+                            (change)="updateQuantity(item.productId, quantity.value)">
+                    </label>
+                </div>
+                <div class="cart-item-total">
+                    <strong>₹{{ item.totalPrice }}</strong>
+                    <button type="button" (click)="remove(item.productId)">Remove</button>
+                </div>
+            </article>
+            }
+        </div>
+        <aside class="cart-summary">
+            <p class="eyebrow">Order summary</p>
+            <h2>{{ currentCart.totalItems }} items</h2>
+            <strong>₹{{ currentCart.totalAmount }}</strong>
+            <a routerLink="/checkout">Continue to checkout →</a>
+            <button type="button" (click)="clear()">Clear cart</button>
+        </aside>
+    </section>
+    }
+    }
+</main>

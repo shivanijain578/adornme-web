@@ -1,0 +1,45 @@
+<div class="profile-container">
+
+    <h1>My Profile</h1>
+
+    @if (errorMessage()) {
+    <div class="error" role="alert">{{ errorMessage() }}</div>
+    } @else if (isLoading()) {
+    <p>Loading profile...</p>
+    } @else if (profile(); as currentProfile) {
+    <section class="profile-card">
+        <div>
+            <p class="profile-label">Name</p>
+            <h2>{{ currentProfile.firstName }} {{ currentProfile.lastName }}</h2>
+        </div>
+        <div>
+            <p class="profile-label">Email</p>
+            <p>{{ currentProfile.email }}</p>
+        </div>
+        <div>
+            <p class="profile-label">Member since</p>
+            <p>{{ currentProfile.createdAt | date:'mediumDate' }}</p>
+        </div>
+    </section>
+
+    <section class="address-section">
+        <p class="eyebrow">Delivery details</p>
+        <h2>Saved addresses</h2>
+        @if (currentProfile.addresses.length === 0) {
+        <p>No saved addresses yet.</p>
+        } @else {
+        @for (address of currentProfile.addresses; track address.id) {
+        <address class="address-card">
+            <strong>{{ address.fullName }}</strong>
+            <span>{{ address.addressLine1 }}</span>
+            @if (address.addressLine2) { <span>{{ address.addressLine2 }}</span> }
+            <span>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</span>
+            <span>{{ address.phoneNumber }}</span>
+            @if (address.isDefault) { <small>Default address</small> }
+        </address>
+        }
+        }
+    </section>
+    }
+
+</div>

@@ -1,0 +1,28 @@
+<main class="category-form-page">
+    <a class="back-link" routerLink="/admin/categories">← Back to categories</a>
+    <header class="form-heading">
+        <p class="eyebrow">Admin studio</p>
+        <h1>Add category.</h1>
+        <p>Give a new edit a clear place in the collection.</p>
+    </header>
+
+    <form class="category-form" [formGroup]="categoryForm" (ngSubmit)="submit()">
+        @if (errorMessage) {
+        <div class="error" role="alert">{{ errorMessage }}</div>
+        }
+        <div class="form-group">
+            <label for="category-name">Category name</label>
+            <input id="category-name" type="text" formControlName="name" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="category-description">Description</label>
+            <textarea id="category-description" rows="6" formControlName="description"></textarea>
+        </div>
+        <div class="form-actions">
+            <a routerLink="/admin/categories">Cancel</a>
+            <button type="submit" [disabled]="categoryForm.invalid || isSaving">
+                {{ isSaving ? 'Adding...' : 'Add category' }}
+            </button>
+        </div>
+    </form>
+</main>

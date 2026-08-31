@@ -1,0 +1,78 @@
+.navbar {
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px clamp(20px, 5vw, 72px);
+    background: rgba(248, 245, 240, 0.94);
+    border-bottom: 1px solid var(--line);
+}
+
+.navbar-brand a {
+    display: block;
+    line-height: 0;
+}
+
+.navbar-brand img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: clamp(18px, 3vw, 38px);
+    color: var(--ink-soft);
+    font-size: 0.77rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.navbar-links a,
+.navbar-links button {
+    text-decoration: none;
+    transition: color 160ms ease;
+}
+
+.navbar-links a:hover,
+.navbar-links button:hover {
+    color: var(--ink);
+}
+
+.navbar-links button {
+    padding: 0;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    text-transform: inherit;
+    letter-spacing: inherit;
+}
+
+.navbar-links .nav-cta {
+    padding: 11px 16px;
+    color: var(--white);
+    background: var(--ink);
+}
+
+@media (max-width: 560px) {
+    .navbar {
+        min-height: 76px;
+        padding: 4px 16px;
+    }
+
+    .navbar-brand img {
+        width: 62px;
+        height: 62px;
+    }
+
+    .navbar-links {
+        gap: 12px;
+        font-size: 0.66rem;
+    }
+
+    .navbar-links .nav-cta {
+        padding: 9px 10px;
+    }
+}

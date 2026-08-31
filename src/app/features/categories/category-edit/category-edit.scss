@@ -1,0 +1,86 @@
+.category-form-page {
+    width: min(680px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 72px 0 100px;
+}
+
+.back-link,
+.form-actions a {
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.form-heading {
+    margin: 54px 0 34px;
+}
+
+.eyebrow {
+    margin-bottom: 12px;
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.form-heading h1 {
+    margin-bottom: 10px;
+    font-size: clamp(3rem, 7vw, 5.6rem);
+    line-height: 0.88;
+}
+
+.form-heading p:last-child,
+.status {
+    margin: 0;
+    color: var(--ink-soft);
+}
+
+.category-form {
+    padding: clamp(24px, 5vw, 46px);
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--ink-soft);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 14px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 22px;
+    align-items: center;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+}
+
+.form-actions button {
+    padding: 14px 18px;
+    color: var(--white);
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-size: 0.72rem;
+}

@@ -1,13 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../../core/services/Auth/auth.service';
+import { AppButton } from '../../../../shared/components/Basic_Material_wrappers/app-button/app-button';
+import { AppFormField } from '../../../../shared/components/Basic_Material_wrappers/app-form-field/app-form-field';
 
 @Component({
   selector: 'app-login',
   imports: [
-    ReactiveFormsModule, CommonModule
+    ReactiveFormsModule, CommonModule, AppFormField, AppButton
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',

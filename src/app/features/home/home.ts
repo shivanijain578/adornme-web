@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ProductSummary } from '../../core/models/product.model';
-import { Category } from '../../core/models/category.model';
-import { ProductService } from '../../core/services/product.service';
-import { CategoryService } from '../../core/services/category.service';
 import { forkJoin } from 'rxjs';
+import { Category } from '../../core/models/Category/category.model';
+import { ProductSummary } from '../../core/models/Product/product.model';
+import { CategoryService } from '../../core/services/Category/category.service';
+import { ProductService } from '../../core/services/Product/product.service';
 
 @Component({
   selector: 'app-home',
@@ -16,11 +16,12 @@ export class Home implements OnInit
 {
   private readonly productService = inject(ProductService);
   private readonly categoryService = inject(CategoryService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  categories = signal<Category[]>([]);
-  bestsellers = signal<ProductSummary[]>([]);
-  isLoading = signal(true);
-  errorMessage = signal('');
+  categories: Category[] = [];
+  bestsellers: ProductSummary[] = [];
+  isLoading = true;
+  errorMessage = '';
 
   ngOnInit(): void
   {
@@ -28,14 +29,19 @@ export class Home implements OnInit
       categories: this.categoryService.getHomeCategories(),
       products: this.productService.getHomeProducts(undefined, 1, 4)
     }).subscribe({
-      next: response => {
-        this.categories.set(response.categories);
-        this.bestsellers.set(response.products);
-        this.isLoading.set(false);
+      next: response =>
+      {
+        this.categories = response.categories;
+        this.bestsellers = response.products;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+
       },
-      error: () => {
-        this.errorMessage.set('Unable to load the collection.');
-        this.isLoading.set(false);
+      error: () =>
+      {
+        this.errorMessage = 'Unable to load the collection.';
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }

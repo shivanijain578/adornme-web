@@ -1,0 +1,22 @@
+<mat-form-field appearance="outline" class="search-field">
+
+    <mat-label>Search</mat-label>
+
+    <mat-icon matIconPrefix>
+        search
+    </mat-icon>
+
+    <input matInput [placeholder]="placeholder" [value]="value" (input)="onInput($any($event.target).value)"
+        (keyup.enter)="onSearch()">
+
+    @if (value) {
+
+    <button mat-icon-button matIconSuffix type="button" aria-label="Clear search" (click)="clear()">
+
+        <mat-icon>close</mat-icon>
+
+    </button>
+
+    }
+
+</mat-form-field>

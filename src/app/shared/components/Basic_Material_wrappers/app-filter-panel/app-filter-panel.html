@@ -1,0 +1,56 @@
+<section class="filter-panel">
+
+    <header class="filter-header">
+
+        <div>
+
+            <span class="filter-eyebrow">
+                Refine
+            </span>
+
+            <h2>
+                {{ title }}
+            </h2>
+
+        </div>
+
+
+        @if (showReset) {
+
+        <button mat-button type="button" class="reset-button" (click)="onReset()">
+
+            <mat-icon>
+                restart_alt
+            </mat-icon>
+
+            Reset
+
+        </button>
+
+        }
+
+    </header>
+
+
+    <div class="filter-content">
+
+        <ng-content></ng-content>
+
+    </div>
+
+
+    @if (showApply) {
+
+    <footer class="filter-footer">
+
+        <button mat-flat-button type="button" class="apply-button" (click)="onApply()">
+
+            Apply Filters
+
+        </button>
+
+    </footer>
+
+    }
+
+</section>

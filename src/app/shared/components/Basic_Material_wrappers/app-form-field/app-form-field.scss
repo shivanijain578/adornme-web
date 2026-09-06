@@ -1,0 +1,36 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.adornme-field {
+    width: 100%;
+}
+
+.adornme-field .mat-mdc-text-field-wrapper {
+    background: var(--input-bg);
+    border-radius: 4px;
+}
+
+.adornme-field .mdc-notched-outline__leading,
+.adornme-field .mdc-notched-outline__notch,
+.adornme-field .mdc-notched-outline__trailing {
+    border-color: var(--line);
+}
+
+.adornme-field:hover .mdc-notched-outline__leading,
+.adornme-field:hover .mdc-notched-outline__notch,
+.adornme-field:hover .mdc-notched-outline__trailing {
+    border-color: var(--line-hover);
+}
+
+.adornme-field.mat-focused .mdc-notched-outline__leading,
+.adornme-field.mat-focused .mdc-notched-outline__notch,
+.adornme-field.mat-focused .mdc-notched-outline__trailing {
+    border-color: var(--focus-ring);
+    border-width: 2px;
+}
+
+.adornme-field .mat-mdc-form-field-subscript-wrapper {
+    min-height: 20px;
+}

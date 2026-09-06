@@ -1,14 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import {
-    Cart,
-    CheckoutRequest,
-    CheckoutResult,
-    Profile,
-    WishlistItem
-} from '../models/customer.model';
+import { environment } from '../../../../environments/environment';
+import { WishlistItem, Cart, Profile, Address, CreateAddressRequest, CheckoutRequest, CheckoutResult, Order } from '../../models/Customer/customer.model';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerService
@@ -24,6 +18,16 @@ export class CustomerService
     removeFromWishlist(productId: number): Observable<unknown>
     {
         return this.http.delete(`${this.apiUrl}/wishlist/${productId}`);
+    }
+
+    addToWishlist(productId: number): Observable<unknown>
+    {
+        return this.http.post(`${this.apiUrl}/wishlist/${productId}`, {});
+    }
+
+    wishlistContains(productId: number): Observable<{ exists: boolean }>
+    {
+        return this.http.get<{ exists: boolean }>(`${this.apiUrl}/wishlist/exists/${productId}`);
     }
 
     getCart(): Observable<Cart>
@@ -62,11 +66,29 @@ export class CustomerService
         return this.http.get<Profile>(`${this.apiUrl}/profile`);
     }
 
+    addAddress(request: CreateAddressRequest): Observable<Address>
+    {
+        return this.http.post<Address>(`${this.apiUrl}/profile/addresses`, request);
+    }
+
     checkout(request: CheckoutRequest): Observable<CheckoutResult>
     {
         return this.http.post<CheckoutResult>(
             `${this.apiUrl}/checkout`,
             request
+        );
+    }
+
+    getOrders(): Observable<Order[]>
+    {
+        return this.http.get<Order[]>(`${this.apiUrl}/orders`);
+    }
+
+    cancelOrder(orderId: number): Observable<{ message: string; status: string }>
+    {
+        return this.http.post<{ message: string; status: string }>(
+            `${this.apiUrl}/orders/${orderId}/cancel`,
+            {}
         );
     }
 }

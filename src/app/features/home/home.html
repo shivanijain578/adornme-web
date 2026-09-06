@@ -19,10 +19,10 @@
             <h2 id="category-title">Find your kind of detail.</h2>
         </div>
         <nav class="category-links" aria-label="Product categories">
-            @if (categories().length === 0 && !isLoading()) {
+            @if (categories.length === 0 && !isLoading) {
             <p class="muted">Categories are coming soon.</p>
             } @else {
-            @for (category of categories(); track category.id; let index = $index) {
+            @for (category of categories; track category.id; let index = $index) {
             <a [routerLink]="['/products']" [queryParams]="{ categoryId: category.id }">
                 <span>0{{ index + 1 }}</span>
                 {{ category.name }}
@@ -42,13 +42,13 @@
             <a class="text-link" routerLink="/products">View all pieces →</a>
         </div>
 
-        @if (errorMessage()) {
-        <div class="error" role="alert">{{ errorMessage() }}</div>
-        } @else if (isLoading()) {
+        @if (errorMessage) {
+        <div class="error" role="alert">{{ errorMessage }}</div>
+        } @else if (isLoading) {
         <p class="muted">Loading the collection...</p>
         } @else {
         <div class="home-product-grid">
-            @for (product of bestsellers(); track product.id) {
+            @for (product of bestsellers; track product.id) {
             <a class="home-product-card" [routerLink]="['/products/', product.id]">
                 @if (product.imageUrl) {
                 <img [src]="product.imageUrl" [alt]="product.name" width="420" height="300" loading="lazy">

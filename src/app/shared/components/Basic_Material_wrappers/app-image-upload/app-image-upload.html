@@ -1,0 +1,45 @@
+<div class="image-upload">
+
+    <input #fileInput hidden type="file" [accept]="accept" [multiple]="multiple" (change)="onFilesSelected($event)">
+
+    <button mat-stroked-button type="button" (click)="fileInput.click()">
+
+        <mat-icon>
+            add_photo_alternate
+        </mat-icon>
+
+        Add Images
+
+    </button>
+
+    @if (previews.length > 0) {
+
+    <div class="preview-grid">
+
+        @for (
+        preview of previews;
+        track preview.url;
+        let i = $index
+        ) {
+
+        <div class="preview">
+
+            <img [src]="preview.url" alt="Selected product image">
+
+            <button mat-icon-button type="button" class="remove-button" aria-label="Remove image" (click)="remove(i)">
+
+                <mat-icon>
+                    close
+                </mat-icon>
+
+            </button>
+
+        </div>
+
+        }
+
+    </div>
+
+    }
+
+</div>

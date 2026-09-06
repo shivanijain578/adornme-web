@@ -1,0 +1,74 @@
+@if (appearance === 'primary') {
+
+<button mat-flat-button class="adornme-button primary" [class.icon-only]="iconOnly" [type]="type"
+    [disabled]="disabled || loading" [attr.aria-label]="ariaLabel || (iconOnly ? icon : null)"
+    [attr.aria-expanded]="ariaExpanded" (click)="onClick()">
+
+    @if (loading) {
+
+    <mat-spinner diameter="18">
+    </mat-spinner>
+
+    } @else {
+
+    @if (icon) {
+
+    <mat-icon>
+        {{ icon }}
+    </mat-icon>
+
+    }
+
+    <span>
+        {{ text }}
+    </span>
+
+    }
+
+</button>
+
+}
+
+@if (appearance === 'stroked') {
+
+<button mat-stroked-button class="adornme-button stroked" [class.icon-only]="iconOnly" [type]="type"
+    [disabled]="disabled || loading" [attr.aria-label]="ariaLabel || (iconOnly ? icon : null)"
+    [attr.aria-expanded]="ariaExpanded" (click)="onClick()">
+
+    @if (icon) {
+
+    <mat-icon>
+        {{ icon }}
+    </mat-icon>
+
+    }
+
+    <span>
+        {{ text }}
+    </span>
+
+</button>
+
+}
+
+@if (appearance === 'text') {
+
+<button mat-button class="adornme-button text" [class.icon-only]="iconOnly" [type]="type"
+    [disabled]="disabled || loading" [attr.aria-label]="ariaLabel || (iconOnly ? icon : null)"
+    [attr.aria-expanded]="ariaExpanded" (click)="onClick()">
+
+    @if (icon) {
+
+    <mat-icon>
+        {{ icon }}
+    </mat-icon>
+
+    }
+
+    <span>
+        {{ text }}
+    </span>
+
+</button>
+
+}

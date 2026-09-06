@@ -1,0 +1,271 @@
+<div class="adornme-grid">
+
+    @if (loading) {
+
+    <div class="grid-loading">
+
+        <mat-spinner diameter="34">
+        </mat-spinner>
+
+        <span>
+            Loading...
+        </span>
+
+    </div>
+
+    } @else if (data.length === 0) {
+
+    <div class="grid-empty">
+
+        <mat-icon>
+            inventory_2
+        </mat-icon>
+
+        <span>
+            {{ emptyMessage }}
+        </span>
+
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    @for (
+                    column of columns;
+                    track column.key
+                    ) {
+
+                    <th [style.width]="column.width">
+
+                        @if (column.sortable) {
+
+                        <button type="button" class="header-button" (click)="sort(column)">
+
+                            <span>
+                                {{ column.header }}
+                            </span>
+
+                            <mat-icon>
+                                {{
+                                                getSortIcon(
+                                                    column.key
+                                                )
+                                            }}
+                            </mat-icon>
+
+                        </button>
+
+                        } @else {
+
+                        {{ column.header }}
+
+                        }
+
+                    </th>
+
+                    }
+
+
+                    @if (actions.length > 0) {
+
+                    <th class="actions-header">
+                        Actions
+                    </th>
+
+                    }
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                @for (
+                row of data;
+                track $index
+                ) {
+
+                <tr (click)="rowClick.emit(row)">
+
+                    @for (
+                    column of columns;
+                    track column.key
+                    ) {
+
+                    <td>
+
+                        @switch (column.type) {
+
+                        @case ('image') {
+
+                        @if (
+                        getValue(
+                        row,
+                        column.key
+                        )
+                        ) {
+
+                        <img class="grid-image" [src]="getValue(
+                                                        row,
+                                                        column.key
+                                                    )" [alt]="
+                                                        getValue(
+                                                            row,
+                                                            'name'
+                                                        ) || column.header
+                                                    ">
+
+                        } @else {
+
+                        <div class="grid-image-placeholder">
+
+                            A
+
+                        </div>
+
+                        }
+
+                        }
+
+
+                        @case ('currency') {
+
+                        ₹{{
+                                                getValue(
+                                                    row,
+                                                    column.key
+                                                )
+                                            }}
+
+                        }
+
+
+                        @case ('boolean') {
+
+                        <span class="boolean-badge" [class.active]="
+                                                    getValue(
+                                                        row,
+                                                        column.key
+                                                    ) === true
+                                                " [class.inactive]="
+                                                    getValue(
+                                                        row,
+                                                        column.key
+                                                    ) !== true
+                                                ">
+
+                            <span class="boolean-dot">
+                            </span>
+
+                            {{
+                                                    getValue(
+                                                        row,
+                                                        column.key
+                                                    )
+                                                    ? 'Yes'
+                                                    : 'No'
+                                                }}
+
+                        </span>
+
+                        }
+
+
+                        @case ('status') {
+
+                        <span class="status-badge">
+
+                            {{
+                                                    getValue(
+                                                        row,
+                                                        column.key
+                                                    )
+                                                }}
+
+                        </span>
+
+                        }
+
+
+                        @case ('date') {
+
+                        {{
+                                                getValue(
+                                                    row,
+                                                    column.key
+                                                ) | date:'mediumDate'
+                                            }}
+
+                        }
+
+
+                        @default {
+
+                        {{
+                                                getValue(
+                                                    row,
+                                                    column.key
+                                                )
+                                            }}
+
+                        }
+
+                        }
+
+                    </td>
+
+                    }
+
+
+                    @if (actions.length > 0) {
+
+                    <td class="row-actions" (click)="$event.stopPropagation()">
+
+                        @for (
+                        action of actions;
+                        track action.label
+                        ) {
+
+                        <button mat-icon-button type="button" [attr.aria-label]="action.label" [title]="action.label"
+                            [class.action-warn]="
+                                                action.color === 'warn'
+                                            " (click)="
+                                                executeAction(
+                                                    action,
+                                                    row
+                                                )
+                                            ">
+
+                            <mat-icon>
+                                {{ action.icon }}
+                            </mat-icon>
+
+                        </button>
+
+                        }
+
+                    </td>
+
+                    }
+
+                </tr>
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    }
+
+</div>

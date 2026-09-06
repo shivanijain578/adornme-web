@@ -1,0 +1,48 @@
+:host {
+    display: block;
+}
+
+.pagination {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 28px;
+
+    margin-top: 20px;
+}
+
+.pagination button {
+    min-height: 40px;
+
+    border-color: var(--line);
+
+    color: var(--ink-soft);
+
+    border-radius: 8px;
+}
+
+.pagination button:not(:disabled):hover {
+    border-color: var(--brand);
+
+    color: var(--brand);
+}
+
+.pagination button mat-icon {
+    width: 18px;
+    height: 18px;
+
+    font-size: 18px;
+}
+
+.page-info {
+    color: var(--ink-soft);
+
+    font-size: 13px;
+}
+
+.page-info strong {
+    color: var(--ink);
+}

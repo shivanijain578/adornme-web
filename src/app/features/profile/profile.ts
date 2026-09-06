@@ -1,7 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { CustomerService } from '../../core/services/customer.service';
-import { Profile as ProfileModel } from '../../core/models/customer.model';
+import { Profile as ProfileModel } from '../../core/models/Customer/customer.model';
+import { CustomerService } from '../../core/services/Customer/customer.service';
 
 @Component({
   selector: 'app-profile',
@@ -9,8 +9,10 @@ import { Profile as ProfileModel } from '../../core/models/customer.model';
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
 })
-export class Profile implements OnInit {
+export class Profile implements OnInit
+{
   private readonly customerService = inject(CustomerService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   profile = signal<ProfileModel | null>(null);
   isLoading = signal(true);
@@ -19,13 +21,17 @@ export class Profile implements OnInit {
   ngOnInit(): void
   {
     this.customerService.getProfile().subscribe({
-      next: profile => {
+      next: profile =>
+      {
         this.profile.set(profile);
         this.isLoading.set(false);
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: () =>
+      {
         this.errorMessage.set('Unable to load your profile.');
         this.isLoading.set(false);
+        this.cdr.detectChanges();
       }
     });
   }

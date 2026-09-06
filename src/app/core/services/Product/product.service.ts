@@ -1,16 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-import { environment } from '../../../environments/environment';
-import {
-    Product,
-    ProductDetail,
-    ProductRequest,
-    ProductSummary
-} from '../models/product.model';
-import { PagedResult } from '../models/paged-result.model';
-import { ProductQuery } from '../models/product-query.model';
+import { environment } from '../../../../environments/environment';
+import { PagedResult } from '../../models/Common/paged-result.model';
+import { ProductQuery } from '../../models/Product/product-query.model';
+import { ProductSummary, ProductDetail, Product, ProductRequest } from '../../models/Product/product.model';
 
 @Injectable({
     providedIn: 'root'
@@ -132,14 +126,18 @@ export class ProductService
         return this.http.post<Product>(this.apiUrl, request);
     }
 
-    updateProduct(
-        id: number,
-        request: ProductRequest
-    ): Observable<Product>
+    updateProduct(id: number, request: ProductRequest): Observable<Product>
     {
         return this.http.put<Product>(
             `${this.apiUrl}/${id}`,
             request
+        );
+    }
+
+    deleteProduct(id: number): Observable<Product>
+    {
+        return this.http.delete<Product>(
+            `${this.apiUrl}/${id}`
         );
     }
 }

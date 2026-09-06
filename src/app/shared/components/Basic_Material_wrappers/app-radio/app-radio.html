@@ -1,0 +1,24 @@
+<div class="radio-container">
+
+    @if (label) {
+    <span class="radio-label">
+        {{ label }}
+    </span>
+    }
+
+    <mat-radio-group [value]="value" [disabled]="disabled" [class.row]="direction === 'row'"
+        [class.column]="direction === 'column'" (change)="onValueChange($event.value)">
+
+        @for (option of options; track option.value) {
+
+        <mat-radio-button [value]="option.value">
+
+            {{ option.label }}
+
+        </mat-radio-button>
+
+        }
+
+    </mat-radio-group>
+
+</div>

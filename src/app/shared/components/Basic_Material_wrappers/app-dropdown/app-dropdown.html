@@ -1,0 +1,42 @@
+<mat-form-field appearance="outline" floatLabel="always" class="adornme-field">
+
+    <mat-label>
+        {{ label }}
+    </mat-label>
+
+    <mat-select panelClass="adornme-select-panel" [value]="value" [disabled]="disabled"
+        (selectionChange)="selectValue($event.value)" (blur)="onTouched()">
+
+        @if (placeholder) {
+
+        <mat-option [value]="null">
+            {{ placeholder }}
+        </mat-option>
+
+        }
+
+        @for (
+        option of options;
+        track getOptionValue(option)
+        ) {
+
+        <mat-option [value]="getOptionValue(option)">
+
+            {{ getOptionLabel(option) }}
+
+        </mat-option>
+
+        }
+
+    </mat-select>
+
+
+    @if (hasError) {
+
+    <mat-error>
+        {{ errorMessage }}
+    </mat-error>
+
+    }
+
+</mat-form-field>

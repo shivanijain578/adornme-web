@@ -24,13 +24,15 @@
                     <h2>{{ item.productName }}</h2>
                     <p>₹{{ item.unitPrice }} each</p>
                     <label>Quantity
-                        <input #quantity type="number" min="1" [max]="item.availableStock" [value]="item.quantity"
-                            (change)="updateQuantity(item.productId, quantity.value)">
+                        <app-form-field type="number" [min]="1" [max]="item.availableStock" [value]="item.quantity"
+                            (valueChange)="updateQuantity(item.productId, $event.toString())">
+                        </app-form-field>
                     </label>
                 </div>
                 <div class="cart-item-total">
                     <strong>₹{{ item.totalPrice }}</strong>
-                    <button type="button" (click)="remove(item.productId)">Remove</button>
+                    <app-button text="Remove" appearance="text" (clicked)="remove(item.productId)">
+                    </app-button>
                 </div>
             </article>
             }
@@ -40,7 +42,8 @@
             <h2>{{ currentCart.totalItems }} items</h2>
             <strong>₹{{ currentCart.totalAmount }}</strong>
             <a routerLink="/checkout">Continue to checkout →</a>
-            <button type="button" (click)="clear()">Clear cart</button>
+            <app-button text="Clear cart" appearance="text" (clicked)="clear()">
+            </app-button>
         </aside>
     </section>
     }

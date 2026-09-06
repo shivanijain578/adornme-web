@@ -1,0 +1,52 @@
+<main class="orders-page">
+    <header class="orders-heading">
+        <p class="eyebrow">Your AdornMe journey</p>
+        <h1>Orders.</h1>
+        <p>Track every considered piece on its way to you.</p>
+    </header>
+
+    @if (errorMessage()) {
+    <div class="error" role="alert">{{ errorMessage() }}</div>
+    } @else if (isLoading()) {
+    <p class="status">Loading your orders...</p>
+    } @else if (orders().length === 0) {
+    <section class="empty-orders">
+        <h2>No orders yet.</h2>
+        <p>Your next favourite piece is waiting in the collection.</p>
+        <a routerLink="/products">Explore the collection</a>
+    </section>
+    } @else {
+    <section class="orders-list" aria-label="Your orders">
+        @for (order of orders(); track order.id) {
+        <article class="order-card">
+            <div class="order-card-header">
+                <div>
+                    <p class="order-number">Order #{{ order.id }}</p>
+                    <time [dateTime]="order.createdAt">{{ order.createdAt | date:'mediumDate' }}</time>
+                </div>
+                <span class="order-status" [class]="statusClass(order.status)">{{ order.status }}</span>
+            </div>
+            <div class="order-items">
+                @for (item of order.items; track item.productId) {
+                <div class="order-item">
+                    <span>{{ item.productName }} × {{ item.quantity }}</span>
+                    <strong>₹{{ item.unitPrice * item.quantity }}</strong>
+                </div>
+                }
+            </div>
+            <div class="order-card-footer">
+                <span>{{ order.address }}</span>
+                <strong>Total ₹{{ order.totalAmount }}</strong>
+            </div>
+            @if (canCancel(order.status)) {
+            <div class="order-card-action">
+                <app-button text="Cancel order" appearance="text" [loading]="cancellingOrderId() === order.id"
+                    [disabled]="cancellingOrderId() !== null" (clicked)="cancelOrder(order)">
+                </app-button>
+            </div>
+            }
+        </article>
+        }
+    </section>
+    }
+</main>

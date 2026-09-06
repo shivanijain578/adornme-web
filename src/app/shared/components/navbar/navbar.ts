@@ -1,13 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../../core/services/Auth/auth.service';
+import { AppButton } from '../Basic_Material_wrappers/app-button/app-button';
 
 @Component({
   selector: 'app-navbar',
   imports: [
     RouterLink,
-    NgOptimizedImage
+    NgOptimizedImage,
+    AppButton
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
@@ -17,6 +19,18 @@ export class Navbar
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+
+  isMenuOpen = false;
+
+  toggleMenu(): void
+  {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu(): void
+  {
+    this.isMenuOpen = false;
+  }
 
   get isLoggedIn(): boolean
   {
@@ -30,6 +44,7 @@ export class Navbar
 
   logout(): void
   {
+    this.closeMenu();
     this.authService.logout();
 
     this.router.navigate(['/login']);

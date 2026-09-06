@@ -1,0 +1,36 @@
+<div class="file-upload">
+
+    <input #fileInput type="file" hidden [accept]="accept" [multiple]="multiple" [disabled]="disabled"
+        (change)="onFileSelected($event)">
+
+    <button mat-stroked-button type="button" [disabled]="disabled" (click)="fileInput.click()">
+
+        <mat-icon>upload</mat-icon>
+
+        {{ label }}
+
+    </button>
+
+    @if (selectedFiles.length > 0) {
+
+    <div class="selected-files">
+
+        @for (file of selectedFiles; track file.name) {
+
+        <div class="file-item">
+
+            <mat-icon>image</mat-icon>
+
+            <span>
+                {{ file.name }}
+            </span>
+
+        </div>
+
+        }
+
+    </div>
+
+    }
+
+</div>

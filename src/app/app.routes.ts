@@ -1,5 +1,5 @@
-import{ Routes} from '@angular/router';
-import {authGuard} from './core/guards/auth.guard';
+import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { Login } from './features/auth/login/login/login';
 import { Register } from './features/auth/register/register';
@@ -14,6 +14,7 @@ import { CategoryEdit } from './features/categories/category-edit/category-edit'
 import { Wishlist } from './features/wishlist/wishlist';
 import { Cart } from './features/cart/cart';
 import { Checkout } from './features/checkout/checkout';
+import { Orders } from './features/orders/orders';
 
 export const routes: Routes = [
 
@@ -86,32 +87,16 @@ export const routes: Routes = [
     },
 
     {
+        path: 'orders',
+        component: Orders,
+        canActivate: [authGuard]
+    },
+
+    {
         path: 'checkout',
         component: Checkout,
         canActivate: [authGuard]
     },
-
-    // {
-    //     path: 'wishlist',
-    //     canActivate: [authGuard],
-    //     loadComponent: () =>
-    //         import(
-    //             './features/wishlist/wishlist.component'
-    //         ).then(
-    //             m => m.WishlistComponent
-    //         )
-    // },
-
-    // {
-    //     path: 'cart',
-    //     canActivate: [authGuard],
-    //     loadComponent: () =>
-    //         import(
-    //             './features/cart/cart.component'
-    //         ).then(
-    //             m => m.CartComponent
-    //         )
-    // },
     {
         path: 'products/:id',
         component: ProductDetails

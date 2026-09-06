@@ -13,19 +13,12 @@
     </nav>
 
     <section class="user-filter-panel" aria-label="Shop filters">
-        <label class="search-field">
-            <span>Search the collection</span>
-            <input type="search" [(ngModel)]="search" placeholder="Search jewellery...">
-        </label>
-        <label>
-            <span>Sort by</span>
-            <select [(ngModel)]="sortBy">
-                <option value="newest">Newest</option>
-                <option value="price">Price</option>
-                <option value="name">Name</option>
-            </select>
-        </label>
-        <button type="button" (click)="applyFilters()">Search collection <span aria-hidden="true">→</span></button>
+        <app-search-box placeholder="Search jewellery..." [value]="search"
+            (valueChange)="search = $event"></app-search-box>
+        <app-dropdown label="Sort by" [options]="sortOptions" optionLabel="label" optionValue="value" [value]="sortBy"
+            (valueChange)="sortBy = $event"></app-dropdown>
+        <app-button text="Search collection" icon="search" (clicked)="applyFilters()">
+        </app-button>
     </section>
 
     @if (errorMessage) {
@@ -58,9 +51,11 @@
     }
 
     <div class="pagination">
-        <button type="button" (click)="previousPage()" [disabled]="pageNumber === 1">Previous</button>
+        <app-button text="Previous" appearance="stroked" (clicked)="previousPage()" [disabled]="pageNumber === 1">
+        </app-button>
         <span>Page {{ pageNumber }} of {{ totalPages }}</span>
-        <button type="button" (click)="nextPage()" [disabled]="pageNumber >= totalPages">Next</button>
+        <app-button text="Next" appearance="stroked" (clicked)="nextPage()" [disabled]="pageNumber >= totalPages">
+        </app-button>
     </div>
     }
 </main>

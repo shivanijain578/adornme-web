@@ -28,27 +28,43 @@
             <div class="error" role="alert">{{ errorMessage() }}</div>
             }
             <h2>Delivery and payment</h2>
-            <div class="form-group">
-                <label for="address">Delivery address</label>
-                <select id="address" formControlName="addressId">
-                    <option [ngValue]="0">Choose an address</option>
-                    @for (address of addresses(); track address.id) {
-                    <option [ngValue]="address.id">{{ address.fullName }} · {{ address.addressLine1 }},
-                        {{ address.city }}
-                    </option>
+            @if (!isAddingAddress && addresses().length > 0) {
+            <div class="form-group checkout-control">
+                <app-dropdown label="Delivery address" placeholder="Choose an address" [options]="addresses()"
+                    optionLabel="fullName" optionValue="id" formControlName="addressId">
+                </app-dropdown>
+                <app-button text="Use a new address" appearance="text" (clicked)="toggleAddressMode()">
+                </app-button>
+            </div>
+            } @else {
+            <section class="new-address-section" aria-labelledby="new-address-title">
+                <div class="section-title-row">
+                    <h3 id="new-address-title">Delivery address</h3>
+                    @if (addresses().length > 0) {
+                    <app-button text="Use saved address" appearance="text" (clicked)="toggleAddressMode()">
+                    </app-button>
                     }
-                </select>
-            </div>
+                </div>
+                <div class="address-grid" [formGroup]="addressForm">
+                    <app-form-field label="Full name" formControlName="fullName"></app-form-field>
+                    <app-form-field label="Phone number" type="tel" formControlName="phoneNumber"></app-form-field>
+                    <app-form-field label="Address line 1" formControlName="addressLine1"></app-form-field>
+                    <app-form-field label="Address line 2 (optional)" formControlName="addressLine2"></app-form-field>
+                    <app-form-field label="City" formControlName="city"></app-form-field>
+                    <app-form-field label="State" formControlName="state"></app-form-field>
+                    <app-form-field label="Postal code" formControlName="postalCode"></app-form-field>
+                </div>
+            </section>
+            }
             <div class="form-group">
-                <label for="payment">Payment method</label>
-                <select id="payment" formControlName="paymentMethod">
-                    <option value="Card">Card</option>
-                    <option value="CashOnDelivery">Cash on delivery</option>
-                </select>
+                <app-dropdown label="Payment method" [options]="paymentOptions" optionLabel="label" optionValue="value"
+                    formControlName="paymentMethod">
+                </app-dropdown>
             </div>
-            <button type="submit" [disabled]="checkoutForm.invalid || isSaving()">
-                {{ isSaving() ? 'Processing...' : 'Place order' }}
-            </button>
+            <app-button type="submit"
+                [disabled]="isSaving() || checkoutForm.controls.paymentMethod.invalid || (!isAddingAddress && checkoutForm.controls.addressId.invalid) || (isAddingAddress && addressForm.invalid)"
+                [loading]="isSaving()" [text]="isSaving() ? 'Processing...' : 'Place order'">
+            </app-button>
         </form>
         <aside class="checkout-summary">
             <p class="eyebrow">Order summary</p>

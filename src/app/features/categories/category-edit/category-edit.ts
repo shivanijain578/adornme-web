@@ -1,12 +1,15 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Category, CategoryRequest } from '../../../core/models/category.model';
-import { CategoryService } from '../../../core/services/category.service';
+import { CategoryRequest, Category } from '../../../core/models/Category/category.model';
+import { CategoryService } from '../../../core/services/Category/category.service';
+import { AppButton } from '../../../shared/components/Basic_Material_wrappers/app-button/app-button';
+import { AppFormField } from '../../../shared/components/Basic_Material_wrappers/app-form-field/app-form-field';
+import { AppTextarea } from '../../../shared/components/Basic_Material_wrappers/app-textarea/app-textarea';
 
 @Component({
   selector: 'app-category-edit',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, AppButton, AppFormField, AppTextarea],
   templateUrl: './category-edit.html',
   styleUrl: './category-edit.scss',
 })
@@ -16,6 +19,7 @@ export class CategoryEdit implements OnInit
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly categoryService = inject(CategoryService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   readonly categoryId = Number(this.route.snapshot.paramMap.get('id'));
   isLoading = false;
@@ -51,10 +55,16 @@ export class CategoryEdit implements OnInit
     const request: CategoryRequest = this.categoryForm.getRawValue();
 
     this.categoryService.updateCategory(this.categoryId, request).subscribe({
-      next: () => this.router.navigate(['/admin/categories']),
-      error: error => {
+      next: () =>
+      {
+        this.router.navigate(['/admin/categories']);
+        this.cdr.detectChanges();
+      },
+      error: error =>
+      {
         this.errorMessage = error?.error?.message ?? 'Unable to save category.';
         this.isSaving = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -63,7 +73,8 @@ export class CategoryEdit implements OnInit
   {
     this.isLoading = true;
     this.categoryService.getCategories().subscribe({
-      next: categories => {
+      next: categories =>
+      {
         const category = categories.find(item => item.id === this.categoryId);
 
         if (!category)
@@ -76,10 +87,13 @@ export class CategoryEdit implements OnInit
         }
 
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: error => {
+      error: error =>
+      {
         this.errorMessage = error?.error?.message ?? 'Unable to load category.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }

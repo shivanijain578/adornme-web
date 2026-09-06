@@ -77,22 +77,28 @@
                 </strong>
             </p>
 
-            @if (product.stockQuantity > 0) {
+            @if (isLoggedIn && product.stockQuantity > 0) {
 
-            <button type="button" class="add-cart-button">
+            <app-button text="Add to Cart" icon="shopping_bag" [loading]="isCartSaving" [disabled]="isCartSaving"
+                (clicked)="addToCart()">
+            </app-button>
 
-                Add to Cart
+            } @else if (isLoggedIn) {
 
-            </button>
+            <app-button text="Out of Stock" [disabled]="true" appearance="stroked">
+            </app-button>
 
-            } @else {
+            }
 
-            <button type="button" disabled>
+            @if (isLoggedIn) {
+            <app-button [text]="isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'"
+                [icon]="isInWishlist ? 'favorite' : 'favorite_border'" appearance="stroked" [loading]="isWishlistSaving"
+                [disabled]="isWishlistSaving" (clicked)="toggleWishlist()">
+            </app-button>
+            }
 
-                Out of Stock
-
-            </button>
-
+            @if (actionMessage) {
+            <p class="product-state" role="status">{{ actionMessage }}</p>
             }
 
             @if (isAdmin) {

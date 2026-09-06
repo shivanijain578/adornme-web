@@ -1,0 +1,68 @@
+.dialog {
+    padding: 26px;
+
+    color: var(--ink);
+}
+
+.dialog-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    margin-bottom: 16px;
+
+    border-radius: 50%;
+
+    background: var(--paper-deep);
+
+    color: var(--brand);
+}
+
+.dialog-icon mat-icon {
+    width: 22px;
+    height: 22px;
+
+    font-size: 22px;
+}
+
+.dialog h2 {
+    margin: 0 0 10px;
+
+    font-family: Georgia, serif;
+
+    font-size: 22px;
+}
+
+.dialog p {
+    margin: 0;
+
+    color: var(--ink-soft);
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+.dialog-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 26px;
+}
+
+.confirm-button {
+    background: var(--brand) !important;
+
+    color: white !important;
+}
+
+.confirm-button.danger {
+    background: #8b5c58 !important;
+}

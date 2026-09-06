@@ -23,7 +23,8 @@
                 <strong>₹{{ item.price }}</strong>
                 <div>
                     <a [routerLink]="['/products', item.productId]">View piece</a>
-                    <button type="button" (click)="remove(item)">Remove</button>
+                    <app-button text="Remove" appearance="text" (clicked)="remove(item)">
+                    </app-button>
                 </div>
             </div>
         </article>

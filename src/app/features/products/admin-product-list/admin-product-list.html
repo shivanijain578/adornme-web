@@ -1,82 +1,92 @@
 <main class="admin-products-page">
+
     <header class="admin-products-heading">
+
         <div>
-            <p class="eyebrow">Admin studio</p>
-            <h1>Product management.</h1>
-            <p>Review, refine, and maintain the AdornMe collection.</p>
+
+            <p class="eyebrow">
+                Admin studio
+            </p>
+
+            <h1>
+                Product management.
+            </h1>
+
+            <p>
+                Review, refine, and maintain
+                the AdornMe collection.
+            </p>
+
         </div>
+
+
         <div class="admin-actions">
-            <a routerLink="/admin/categories">Categories</a>
-            <a routerLink="/admin/products/new">Add product <span aria-hidden="true">+</span></a>
+
+            <app-button text="Categories" appearance="text" (clicked)="openCategories()">
+            </app-button>
+
+
+            <app-button text="Add Product" icon="add" (clicked)="openAddProduct()">
+            </app-button>
+
         </div>
+
     </header>
 
-    <section class="admin-filter-panel" aria-label="Product management filters">
-        <div class="filters">
-            <label class="search-field">
-                <span>Search</span>
-                <input type="text" [(ngModel)]="search" placeholder="Search products...">
-            </label>
-            <label>
-                <span>Category</span>
-                <select [(ngModel)]="selectedCategoryId">
-                    <option [ngValue]="undefined">All categories</option>
-                    @for (category of categories; track category.id) {
-                    <option [ngValue]="category.id">{{ category.name }}</option>
-                    }
-                </select>
-            </label>
-            <label>
-                <span>Sort by</span>
-                <select [(ngModel)]="sortBy">
-                    <option value="newest">Newest</option>
-                    <option value="price">Price</option>
-                    <option value="name">Name</option>
-                </select>
-            </label>
-            <button type="button" (click)="searchProducts()">Apply filters</button>
-        </div>
+    @if (adminSummary; as summary) {
+    <section class="order-summary" aria-label="Order status summary">
+        <div><span>Received</span><strong>{{ summary.receivedOrders }}</strong></div>
+        <div><span>Pending</span><strong>{{ summary.pendingOrders }}</strong></div>
+        <div><span>Shipped</span><strong>{{ summary.shippedOrders }}</strong></div>
+        <div><span>Delivered</span><strong>{{ summary.deliveredOrders }}</strong></div>
+        <div><span>Returned</span><strong>{{ summary.returnedOrders }}</strong></div>
+        <div><span>Cancelled</span><strong>{{ summary.cancelledOrders }}</strong></div>
     </section>
+    }
+
+
+    <app-filter-panel title="Product Filters" (apply)="applyFilters()" (reset)="resetFilters()">
+
+
+        <app-search-box placeholder="Search products..." [value]="search" (valueChange)="search = $event">
+        </app-search-box>
+
+
+        <app-dropdown label="Category" placeholder="All categories" [options]="categories" optionLabel="name"
+            optionValue="id" [value]="selectedCategoryId" (valueChange)="selectedCategoryId = $event">
+        </app-dropdown>
+
+
+        <app-dropdown label="Sort by" [options]="sortOptions" optionLabel="label" optionValue="value" [value]="sortBy"
+            (valueChange)="sortBy = $event">
+        </app-dropdown>
+
+
+    </app-filter-panel>
+
 
     @if (errorMessage) {
-    <div class="error" role="alert">{{ errorMessage }}</div>
-    } @else if (isLoading && products.length === 0) {
-    <p class="status">Loading products...</p>
-    } @else {
-    <section class="admin-product-table" aria-label="Products">
-        <div class="table-header">
-            <span>Product</span>
-            <span>Category</span>
-            <span>Price</span>
-            <span>Stock</span>
-            <span>Actions</span>
-        </div>
-        @for (product of products; track product.id) {
-        <article class="admin-product-row">
-            <div class="product-name-cell">
-                @if (product.imageUrl) {
-                <img [src]="product.imageUrl" [alt]="product.name" width="64" height="64" loading="lazy">
-                } @else {
-                <div class="admin-product-placeholder">A</div>
-                }
-                <strong>{{ product.name }}</strong>
-            </div>
-            <span>{{ product.categoryName }}</span>
-            <span>₹{{ product.price }}</span>
-            <span class="stock-value">{{ product.stockQuantity }}</span>
-            <a [routerLink]="['/admin/products', product.id, 'edit']">Edit</a>
-        </article>
-        }
-    </section>
 
-    @if (products.length === 0) {
-    <p class="status">No products found.</p>
-    }
+    <div class="error" role="alert">
 
-    <div class="pagination">
-        <button type="button" (click)="previousPage()" [disabled]="pageNumber === 1">Previous</button>
-        <span>Page {{ pageNumber }} of {{ totalPages }}</span>
-        <button type="button" (click)="nextPage()" [disabled]="pageNumber >= totalPages">Next</button>
+        {{ errorMessage }}
+
     </div>
+
+    } @else {
+
+    <app-data-grid [columns]="productColumns" [data]="products" [actions]="productActions" [loading]="isLoading"
+        emptyMessage="No products found." (sortChange)="onGridSortChange($event)">
+    </app-data-grid>
+
+
+    @if (!isLoading && totalPages > 0) {
+
+    <app-pagination [pageNumber]="pageNumber" [totalPages]="totalPages" (pageChange)="onPageChange($event)">
+    </app-pagination>
+
     }
+
+    }
+
 </main>

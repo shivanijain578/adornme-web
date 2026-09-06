@@ -1,0 +1,134 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.filter-panel {
+    width: 100%;
+
+    background: var(--white);
+
+    border: 1px solid var(--line);
+
+    border-radius: 16px;
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow: hidden;
+}
+
+.filter-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 18px 22px;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.filter-eyebrow {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--brand);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+}
+
+.filter-header h2 {
+    margin: 0;
+
+    color: var(--ink);
+
+    font-family: Georgia, serif;
+
+    font-size: 18px;
+
+    font-weight: 600;
+}
+
+.reset-button {
+    color: var(--ink-soft) !important;
+
+    font-size: 13px;
+}
+
+.reset-button mat-icon {
+    width: 18px;
+    height: 18px;
+
+    margin-right: 4px;
+
+    font-size: 18px;
+}
+
+.filter-content {
+    display: grid;
+
+    grid-template-columns:
+        minmax(280px, 2fr) minmax(200px, 1fr) minmax(200px, 1fr);
+
+    gap: 16px;
+
+    padding: 20px 22px 4px;
+}
+
+.filter-footer {
+    display: flex;
+
+    justify-content: flex-end;
+
+    padding: 10px 22px 18px;
+}
+
+.apply-button {
+    min-width: 130px;
+
+    min-height: 40px;
+
+    border-radius: var(--border-radius) !important;
+
+    background: var(--brand) !important;
+
+    color: var(--white) !important;
+}
+
+@media (max-width: 900px) {
+
+    .filter-content {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .filter-content {
+        grid-template-columns: 1fr;
+
+        padding: 16px;
+    }
+
+    .filter-header {
+        padding: 16px;
+    }
+
+    .filter-footer {
+        padding: 8px 16px 16px;
+    }
+
+    .apply-button {
+        width: 100%;
+    }
+}

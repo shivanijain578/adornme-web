@@ -1,0 +1,24 @@
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.selected-files {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    border: 1px solid #e4ddd4;
+    border-radius: 8px;
+
+    font-size: 14px;
+}

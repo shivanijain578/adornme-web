@@ -6,7 +6,12 @@
         </a>
     </div>
 
-    <div class="navbar-links">
+    <app-button class="navbar-toggle" [icon]="isMenuOpen ? 'close' : 'menu'" [iconOnly]="true"
+        [ariaLabel]="isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'" [ariaExpanded]="isMenuOpen"
+        (clicked)="toggleMenu()">
+    </app-button>
+
+    <div class="navbar-links" [class.open]="isMenuOpen" (click)="closeMenu()">
 
         @if (isLoggedIn) {
         <a routerLink="/home">Home</a>
@@ -16,9 +21,11 @@
         } @else {
         <a routerLink="/wishlist">Wishlist</a>
         <a routerLink="/cart">Cart</a>
+        <a routerLink="/orders">Orders</a>
         }
         <a routerLink="/profile">Profile</a>
-        <button type="button" (click)="logout()">Logout</button>
+        <app-button text="Logout" appearance="text" (clicked)="logout()">
+        </app-button>
         } @else {
         <a routerLink="/home">Home</a>
         <a routerLink="/login">Login</a>

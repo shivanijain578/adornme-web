@@ -1,69 +1,222 @@
 <div class="product-form-page">
-    <a class="back-link" routerLink="/admin/products">← Back to product management</a>
+
+    <!-- Back -->
+
+    <a class="back-link" routerLink="/admin/products">
+
+        <mat-icon>
+            arrow_back
+        </mat-icon>
+
+        Back to product management
+
+    </a>
+
+
+    <!-- Header -->
 
     <header class="form-heading">
-        <p class="eyebrow">Admin studio</p>
-        <h1>{{ isEditMode ? 'Edit a piece.' : 'Add a new piece.' }}</h1>
-        <p>Keep the AdornMe collection considered, clear, and current.</p>
+
+        <p class="eyebrow">
+            Admin studio
+        </p>
+
+        <h1>
+            {{ isEditMode ? 'Edit a piece.' : 'Add a new piece.' }}
+        </h1>
+
+        <p>
+            Keep the AdornMe collection considered,
+            clear, and current.
+        </p>
+
     </header>
 
+
+    <!-- Loading -->
+
     @if (isLoading) {
-    <p>Loading product...</p>
+
+    <div class="form-loading">
+
+        <mat-spinner diameter="36">
+        </mat-spinner>
+
+        <span>
+            Loading product...
+        </span>
+
+    </div>
+
     } @else {
+
     <form class="product-form" [formGroup]="productForm" (ngSubmit)="submit()">
+
+
+        <!-- Error -->
+
         @if (errorMessage) {
-        <div class="error" role="alert">{{ errorMessage }}</div>
+
+        <div class="error" role="alert">
+
+            <mat-icon>
+                error_outline
+            </mat-icon>
+
+            <span>
+                {{ errorMessage }}
+            </span>
+
+        </div>
+
         }
 
-        <div class="form-grid">
-            <div class="form-group form-group-wide">
-                <label for="name">Product name</label>
-                <input id="name" type="text" formControlName="name">
+
+        <!-- Product Information -->
+
+        <section class="form-section">
+
+            <div class="section-heading">
+
+                <span class="section-number">
+                    01
+                </span>
+
+                <div>
+
+                    <h2>
+                        Product information
+                    </h2>
+
+                    <p>
+                        The essential details customers
+                        will see in the collection.
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label for="categoryId">Category</label>
-                <select id="categoryId" formControlName="categoryId">
-                    <option [ngValue]="0">Choose category</option>
-                    @for (category of categories; track category.id) {
-                    <option [ngValue]="category.id">{{ category.name }}</option>
-                    }
-                </select>
+
+            <div class="form-grid">
+
+
+                <!-- Product Name -->
+
+                <div class="form-group-wide">
+
+                    <app-form-field label="Product name" placeholder="Enter product name" formControlName="name">
+                    </app-form-field>
+
+                </div>
+
+
+                <!-- Category -->
+
+                <app-dropdown label="Category" placeholder="Choose category" [options]="categories" optionLabel="name"
+                    optionValue="id" formControlName="categoryId">
+                </app-dropdown>
+
+
+                <!-- Price -->
+
+                <app-form-field label="Price" placeholder="Enter price" type="number" [min]="0" [step]="0.01"
+                    formControlName="price">
+                </app-form-field>
+
+
+                <!-- Stock -->
+
+                <app-form-field label="Stock quantity" placeholder="Enter quantity" type="number" [min]="0" [step]="1"
+                    formControlName="stockQuantity">
+                </app-form-field>
+
+
+                <!-- Image URL -->
+
+                <div class="form-group-wide">
+
+                    <app-form-field label="Image URL" placeholder="https://..." type="url"
+                        hint="Optional. Use a stable, publicly accessible image URL." formControlName="imageUrl">
+                    </app-form-field>
+
+                </div>
+
+
+                <!-- Description -->
+
+                <div class="form-group-wide">
+
+                    <app-textarea label="Description" placeholder="Describe this piece..." [rows]="6" [maxLength]="2000"
+                        formControlName="description">
+                    </app-textarea>
+
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label for="price">Price</label>
-                <input id="price" type="number" min="0" step="0.01" formControlName="price">
+        </section>
+
+
+        <!-- Visibility -->
+
+        <section class="form-section">
+
+            <div class="section-heading">
+
+                <span class="section-number">
+                    02
+                </span>
+
+                <div>
+
+                    <h2>
+                        Collection visibility
+                    </h2>
+
+                    <p>
+                        Choose whether customers can
+                        currently see this piece.
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label for="stockQuantity">Stock quantity</label>
-                <input id="stockQuantity" type="number" min="0" formControlName="stockQuantity">
-            </div>
 
-            <div class="form-group form-group-wide">
-                <label for="imageUrl">Image URL</label>
-                <input id="imageUrl" type="url" formControlName="imageUrl" placeholder="https://..."><small>Optional.
-                    Use a stable, publicly accessible image URL.</small>
-            </div>
+            <app-checkbox label="Visible in collection" formControlName="isActive">
+            </app-checkbox>
 
-            <div class="form-group form-group-wide">
-                <label for="description">Description</label>
-                <textarea id="description" rows="6" formControlName="description"></textarea>
-            </div>
-        </div>
+        </section>
 
-        <label class="active-toggle">
-            <input type="checkbox" formControlName="isActive">
-            <span>Visible in collection</span>
-        </label>
+
+        <!-- Actions -->
 
         <div class="form-actions">
-            <a routerLink="/admin/products">Cancel</a>
-            <button type="submit" [disabled]="productForm.invalid || isSaving">
-                {{ isSaving ? 'Saving...' : (isEditMode ? 'Save changes' : 'Publish product') }}
-            </button>
+
+            <a routerLink="/admin/products" class="cancel-link">
+
+                Cancel
+
+            </a>
+
+
+            <app-button [text]="
+                        isSaving
+                            ? 'Saving...'
+                            : (
+                                isEditMode
+                                    ? 'Save changes'
+                                    : 'Publish product'
+                            )
+                    " icon="save" type="submit" [loading]="isSaving" [disabled]="productForm.invalid">
+            </app-button>
+
         </div>
+
+
     </form>
+
     }
+
 </div>

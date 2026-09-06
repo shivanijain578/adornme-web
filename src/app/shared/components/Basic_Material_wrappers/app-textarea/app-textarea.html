@@ -1,0 +1,35 @@
+<mat-form-field appearance="outline" floatLabel="always" class="adornme-field">
+
+    <mat-label>
+        {{ label }}
+    </mat-label>
+
+    <textarea matInput [rows]="rows" [attr.maxlength]="maxLength ?? null" [placeholder]="placeholder"
+        [disabled]="disabled" [value]="value" (input)="onInput($event)" (blur)="onBlur()">
+    </textarea>
+
+    @if (hint && !hasError) {
+
+    <mat-hint>
+        {{ hint }}
+    </mat-hint>
+
+    }
+
+    @if (maxLength && !hasError) {
+
+    <mat-hint align="end">
+        {{ value.length }} / {{ maxLength }}
+    </mat-hint>
+
+    }
+
+    @if (hasError) {
+
+    <mat-error>
+        {{ errorMessage }}
+    </mat-error>
+
+    }
+
+</mat-form-field>

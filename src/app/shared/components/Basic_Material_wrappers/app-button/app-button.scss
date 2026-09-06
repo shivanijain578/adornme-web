@@ -1,0 +1,48 @@
+:host {
+    display: inline-block;
+}
+
+.adornme-button {
+    min-height: 40px;
+
+    border-radius: var(--border-radius) !important;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    letter-spacing: 0.1px;
+}
+
+.primary {
+    --mdc-filled-button-container-color: var(--brand);
+    --mdc-filled-button-label-text-color: var(--white);
+}
+
+.primary:hover {
+    --mdc-filled-button-container-color: var(--brand-deep);
+}
+
+.stroked {
+    --mdc-outlined-button-label-text-color: var(--ink-soft);
+}
+
+.text {
+    color: var(--ink-soft);
+}
+
+.adornme-button mat-icon {
+    width: 18px;
+    height: 18px;
+
+    font-size: 18px;
+}
+
+.adornme-button mat-spinner {
+    margin: 0 auto;
+}
+
+.adornme-button.icon-only {
+    width: 40px;
+    min-width: 40px;
+    padding: 0 !important;
+}

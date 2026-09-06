@@ -29,7 +29,8 @@
             <p>{{ category.description || 'No description added.' }}</p>
             <div class="card-actions">
                 <a [routerLink]="['/admin/categories', category.id, 'edit']">Edit</a>
-                <button type="button" (click)="deleteCategory(category)">Delete</button>
+                <app-button text="Delete" appearance="text" (clicked)="deleteCategory(category)">
+                </app-button>
             </div>
         </article>
         }

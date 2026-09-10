@@ -33,18 +33,6 @@
 
     </header>
 
-    @if (adminSummary; as summary) {
-    <section class="order-summary" aria-label="Order status summary">
-        <div><span>Received</span><strong>{{ summary.receivedOrders }}</strong></div>
-        <div><span>Pending</span><strong>{{ summary.pendingOrders }}</strong></div>
-        <div><span>Shipped</span><strong>{{ summary.shippedOrders }}</strong></div>
-        <div><span>Delivered</span><strong>{{ summary.deliveredOrders }}</strong></div>
-        <div><span>Returned</span><strong>{{ summary.returnedOrders }}</strong></div>
-        <div><span>Cancelled</span><strong>{{ summary.cancelledOrders }}</strong></div>
-    </section>
-    }
-
-
     <app-filter-panel title="Product Filters" (apply)="applyFilters()" (reset)="resetFilters()">
 
 

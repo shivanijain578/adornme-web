@@ -1,0 +1,37 @@
+<main class="order-detail-page">
+    @if (isLoading()) {
+    <p>Loading...</p>
+    } @else if (errorMessage()) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+    } @else if (order(); as currentOrder) {
+    <header class="detail-heading">
+        <a routerLink="/orders">Back to orders</a>
+        <p class="eyebrow">Order #{{ currentOrder.id }}</p>
+        <h1>Your order.</h1>
+        <p>Placed {{ currentOrder.createdAt | date:'mediumDate' }}</p>
+        <span class="order-status">{{ currentOrder.status }}</span>
+    </header>
+
+    <section class="detail-section" aria-labelledby="items-title">
+        <h2 id="items-title">Items</h2>
+        @for (item of currentOrder.items; track item.productId) {
+        <div class="detail-item"><span>{{ item.productName }} ×
+                {{ item.quantity }}</span><strong>₹{{ item.unitPrice * item.quantity }}</strong></div>
+        }
+        <div class="detail-total"><span>Total</span><strong>₹{{ currentOrder.totalAmount }}</strong></div>
+    </section>
+
+    <section class="detail-section">
+        <h2>Delivery address</h2>
+        <p>{{ currentOrder.address }}</p>
+    </section>
+
+    <div class="detail-actions">
+        <a [routerLink]="['/orders', currentOrder.id, 'invoice']">View invoice</a>
+        @if (canCancel()) {
+        <app-button text="Cancel order" appearance="stroked" [loading]="isCancelling()" [disabled]="isCancelling()"
+            (clicked)="cancel()"></app-button>
+        }
+    </div>
+    }
+</main>

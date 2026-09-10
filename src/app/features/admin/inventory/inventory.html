@@ -1,0 +1,29 @@
+<main class="admin-page">
+    <header class="admin-heading">
+        <p class="eyebrow">Admin studio</p>
+        <h1>Inventory.</h1>
+        <p>Adjust stock through the inventory API and keep a visible audit trail.</p>
+    </header>
+    @if (errorMessage()) { <p class="error" role="alert">{{ errorMessage() }}</p> }
+    <form class="admin-form" [formGroup]="form" (ngSubmit)="adjust()"><select formControlName="productId"
+            aria-label="Product">
+            <option [ngValue]="0">Choose product</option>@for (item of items(); track item.productId) { <option
+                [ngValue]="item.productId">{{ item.productName }}</option> }
+        </select><input formControlName="quantity" type="number" min="1" aria-label="Quantity"><select
+            formControlName="type" aria-label="Adjustment type">
+            <option [ngValue]="1">Stock in</option>
+            <option [ngValue]="2">Stock out</option>
+            <option [ngValue]="3">Adjustment</option>
+        </select><input formControlName="reason" placeholder="Reason" aria-label="Reason"><input
+            formControlName="reference" placeholder="Reference" aria-label="Reference"><app-button text="Adjust stock"
+            type="submit" [loading]="isSaving()"></app-button></form>
+    @if (isLoading()) { <p>Loading...</p> } @else { <section class="inventory-grid">@for (item of items(); track
+        item.productId) { <article><strong>{{ item.productName }}</strong><span>Stock
+                {{ item.stockQuantity }}</span><small>{{ item.isOutOfStock ? 'Out of stock' : item.isLowStock ? 'Low stock' : 'In stock' }}</small>
+        </article> }</section> }
+    <section class="transactions">
+        <h2>Recent transactions</h2>@for (transaction of transactions(); track transaction.id) { <div>
+            <span>{{ transaction.productName }} · {{ transaction.type }} ·
+                {{ transaction.quantity }}</span><time>{{ transaction.createdAt | date:'mediumDate' }}</time></div> }
+    </section>
+</main>

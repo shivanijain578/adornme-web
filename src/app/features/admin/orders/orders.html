@@ -1,0 +1,15 @@
+<main class="admin-page">
+    <header class="admin-heading">
+        <p class="eyebrow">Admin studio</p>
+        <h1>Orders.</h1>
+        <p>Review customer orders and update status through backend transition rules.</p>
+    </header><select aria-label="Filter by status" (change)="filter($event)">@for (status of statuses; track
+        status.label) { <option [value]="status.value ?? ''">{{ status.label }}</option> }</select>@if (errorMessage())
+    { <p class="error" role="alert">{{ errorMessage() }}</p> } @else if (isLoading()) { <p>Loading...</p> } @else if
+    (orders().length === 0) { <p>No orders found.</p> } @else { <section class="order-list">@for (order of orders();
+        track order.id) { <a class="order-row" [routerLink]="['/admin/orders', order.id]">
+            <div><strong>Order #{{ order.id }}</strong><span>{{ order.customerEmail || 'Customer unavailable' }}</span>
+            </div>
+            <span>{{ order.createdAt | date:'mediumDate' }}</span><span>{{ order.status }}</span><strong>₹{{ order.totalAmount }}</strong>
+        </a> }</section> }
+</main>

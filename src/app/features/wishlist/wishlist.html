@@ -14,7 +14,7 @@
         @for (item of items(); track item.id) {
         <article class="saved-card">
             @if (item.imageUrl) {
-            <img [src]="item.imageUrl" [alt]="item.productName" width="280" height="220" loading="lazy">
+            <img [src]="item.imageUrl | assetUrl" [alt]="item.productName" width="280" height="220" loading="lazy">
             } @else {
             <div class="saved-placeholder">AdornMe</div>
             }

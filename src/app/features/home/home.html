@@ -1,69 +1,153 @@
+<!-- AdornMe Home - luxury storefront -->
 <main class="home-page">
-    <section class="home-hero">
-        <div class="hero-copy">
-            <p class="eyebrow">AdornMe studio</p>
-            <h1>Small details.<br>Lasting impression.</h1>
-            <p class="hero-intro">Jewellery and accessories with a quiet point of view, made for the way you move
-                through the world.</p>
-            <a class="hero-cta" routerLink="/products">Explore the collection <span aria-hidden="true">→</span></a>
-        </div>
-        <div class="hero-mark" aria-hidden="true">
-            <span>ADORN</span>
-            <span>ME</span>
-        </div>
-    </section>
 
-    <section class="home-categories" aria-labelledby="category-title">
-        <div class="section-heading">
-            <p class="eyebrow">Browse by mood</p>
-            <h2 id="category-title">Find your kind of detail.</h2>
+    <!-- Branded page loader: no plain "Loading..." text -->
+    @if (showPreloader) {
+    <div class="brand-preloader" [class.preloader-leaving]="pageReady" aria-live="polite" aria-label="Opening AdornMe">
+        <div class="preloader-orbit orbit-one"></div>
+        <div class="preloader-orbit orbit-two"></div>
+        <div class="preloader-sparkle sparkle-one">✦</div>
+        <div class="preloader-sparkle sparkle-two">✧</div>
+        <div class="preloader-brand">
+            <span class="brand-word">
+                @for (letter of logoLetters; track $index) {
+                <span class="logo-letter" [style.--letter-index]="$index">{{ letter }}</span>
+                }
+            </span>
+            <span class="brand-subtitle">JEWELLERY · MADE TO SHINE</span>
         </div>
-        <nav class="category-links" aria-label="Product categories">
-            @if (categories.length === 0 && !isLoading) {
-            <p class="muted">Categories are coming soon.</p>
-            } @else {
-            @for (category of categories; track category.id; let index = $index) {
-            <a [routerLink]="['/products']" [queryParams]="{ categoryId: category.id }">
-                <span>0{{ index + 1 }}</span>
-                {{ category.name }}
-                <b aria-hidden="true">↗</b>
+        <div class="preloader-line"><span></span></div>
+    </div>
+    }
+
+    <!-- Hero: appears ONLY when an admin-created banner exists -->
+    @if (banners.length > 0) {
+    <section class="hero" aria-label="Featured offers">
+        @if (banners[activeBannerIndex]; as banner) {
+        <div class="hero-image-wrap">
+            <img class="hero-image" [src]="banner.imageUrl | assetUrl" [alt]="banner.title" width="1920" height="820"
+                priority>
+        </div>
+        <div class="hero-shade"></div>
+
+        @if (banner.title || banner.linkUrl) {
+        <div class="hero-content">
+            <span class="hero-kicker">ADORNME EDIT</span>
+            @if (banner.title) {
+            <h1>{{ banner.title }}</h1>
+            }
+            @if (banner.linkUrl) {
+            <a class="hero-button" [href]="banner.linkUrl">
+                Shop the edit <span>↗</span>
             </a>
             }
+        </div>
+        }
+
+        @if (banners.length > 1) {
+        <div class="hero-controls">
+            <button type="button" class="hero-arrow" aria-label="Previous banner" (click)="previousBanner()">←</button>
+            <div class="hero-dots">
+                @for (item of banners; track item.id; let index = $index) {
+                <button type="button" [attr.aria-label]="'Show banner ' + (index + 1)"
+                    [attr.aria-current]="index === activeBannerIndex ? 'true' : null"
+                    (click)="selectBanner(index)"></button>
+                }
+            </div>
+            <button type="button" class="hero-arrow" aria-label="Next banner" (click)="nextBanner()">→</button>
+        </div>
+        }
+        }
+    </section>
+    }
+
+    <!-- Category navigation -->
+    <section class="categories-section" aria-labelledby="categories-title">
+        <div class="section-topline">
+            <div>
+                <span class="section-number">01</span>
+                <p class="section-eyebrow">Explore the collection</p>
+            </div>
+            <a routerLink="/products" class="underlined-link">View all pieces <span>↗</span></a>
+        </div>
+
+        <div class="section-title-row">
+            <h2 id="categories-title">Shop by <em>category</em></h2>
+            <p>Pieces designed to become part of your everyday.</p>
+        </div>
+
+        @if (categories.length === 0 && !isLoading) {
+        <p class="empty-state">Categories will appear here soon.</p>
+        } @else {
+        <div class="category-grid">
+            @for (category of categories; track category.id; let index = $index) {
+            <a class="category-card" [routerLink]="['/products']" [queryParams]="{ categoryId: category.id }">
+                <span class="category-index">{{ (index + 1).toString().padStart(2, '0') }}</span>
+                <span class="category-name">{{ category.name }}</span>
+                <span class="category-arrow">↗</span>
+                <span class="category-line"></span>
+            </a>
             }
-        </nav>
+        </div>
+        }
     </section>
 
-    <section class="bestsellers" aria-labelledby="bestseller-title">
-        <div class="section-heading section-heading-row">
+    <!-- Best sellers -->
+    <section class="products-section" aria-labelledby="bestseller-title">
+        <div class="section-topline">
             <div>
-                <p class="eyebrow">The considered edit</p>
-                <h2 id="bestseller-title">Bestsellers.</h2>
+                <span class="section-number">02</span>
+                <p class="section-eyebrow">Most wanted</p>
             </div>
-            <a class="text-link" routerLink="/products">View all pieces →</a>
+            <a routerLink="/products" class="underlined-link">Shop everything <span>↗</span></a>
+        </div>
+
+        <div class="section-title-row product-heading">
+            <div>
+                <p class="mini-label">THE PIECES EVERYONE WANTS</p>
+                <h2 id="bestseller-title">Best <em>sellers</em></h2>
+            </div>
+            <p>From subtle everyday details to statement pieces — find your next favourite.</p>
         </div>
 
         @if (errorMessage) {
-        <div class="error" role="alert">{{ errorMessage }}</div>
-        } @else if (isLoading) {
-        <p class="muted">Loading the collection...</p>
-        } @else {
-        <div class="home-product-grid">
-            @for (product of bestsellers; track product.id) {
-            <a class="home-product-card" [routerLink]="['/products/', product.id]">
-                @if (product.imageUrl) {
-                <img [src]="product.imageUrl" [alt]="product.name" width="420" height="300" loading="lazy">
-                } @else {
-                <div class="home-product-placeholder">AdornMe</div>
-                }
-                <div class="home-product-info">
-                    <span>{{ product.categoryName }}</span>
-                    <h3>{{ product.name }}</h3>
-                    @if (product.discountPrice !== undefined && product.discountPrice !== null) {
-                    <strong>₹{{ product.discountPrice }}</strong>
-                    <del>₹{{ product.price }}</del>
+        <div class="error-state" role="alert">
+            <span>Something went wrong.</span>
+            <small>{{ errorMessage }}</small>
+        </div>
+        } @else if (!isLoading && bestsellers.length === 0) {
+        <p class="empty-state">No pieces are available right now.</p>
+        } @else if (!isLoading) {
+        <div class="product-grid">
+            @for (product of bestsellers; track product.id; let index = $index) {
+            <a class="product-card" [routerLink]="['/products', product.id]">
+                <div class="product-visual">
+                    @if (product.images[0]; as image) {
+                    <img [src]="image.imageUrl | assetUrl" [alt]="product.name" width="600" height="750" loading="lazy">
                     } @else {
-                    <strong>₹{{ product.price }}</strong>
+                    <div class="product-placeholder">
+                        <span>AdornMe</span>
+                    </div>
                     }
+
+                    <span class="product-number">{{ (index + 1).toString().padStart(2, '0') }}</span>
+
+                    @if (product.discountPercentage > 0) {
+                    <span class="discount-badge">{{ product.discountPercentage }}% OFF</span>
+                    }
+
+                    <span class="view-piece">View piece <b>↗</b></span>
+                </div>
+
+                <div class="product-info">
+                    <p class="product-category">{{ product.categoryName }}</p>
+                    <h3>{{ product.name }}</h3>
+                    <div class="price-row">
+                        <strong>₹{{ product.sellingPrice }}</strong>
+                        @if (product.discountPercentage > 0) {
+                        <del>₹{{ product.originalPrice }}</del>
+                        }
+                    </div>
                 </div>
             </a>
             }
@@ -71,9 +155,25 @@
         }
     </section>
 
-    <section class="home-note">
-        <p class="eyebrow">Made to be noticed</p>
-        <h2>The finishing touch is rarely the loudest one.</h2>
-        <p>Find considered pieces that make an outfit feel unmistakably yours.</p>
+    <!-- Minimal brand strip -->
+    <section class="brand-strip" aria-label="AdornMe">
+        <div class="brand-strip-word">adornme</div>
+        <div class="brand-strip-copy">
+            <span>DETAILS MATTER</span>
+            <span class="strip-dot">✦</span>
+            <span>WEAR YOUR STORY</span>
+            <span class="strip-dot">✦</span>
+            <span>MADE FOR EVERY DAY</span>
+        </div>
     </section>
+
+    <section class="shop-cta">
+        <div class="cta-ring" aria-hidden="true"></div>
+        <div class="cta-content">
+            <span class="section-eyebrow">Your next favourite piece</span>
+            <h2>Find something<br><em>made for you.</em></h2>
+            <a class="cta-button" routerLink="/products">Explore jewellery <span>↗</span></a>
+        </div>
+    </section>
+
 </main>

@@ -16,8 +16,22 @@
         <a routerLink="/products">Explore the collection</a>
     </section>
     } @else {
+    <nav class="order-status-tabs" aria-label="Filter orders by status">
+        @for (status of statuses; track status) {
+        <button type="button" [class.active]="selectedStatus() === status"
+            [attr.aria-current]="selectedStatus() === status ? 'page' : null" (click)="selectStatus(status)">
+            {{ status }}
+        </button>
+        }
+    </nav>
+
+    @if (filteredOrders().length === 0) {
+    <section class="empty-orders">
+        <h2>No {{ selectedStatus() | lowercase }} orders.</h2>
+    </section>
+    } @else {
     <section class="orders-list" aria-label="Your orders">
-        @for (order of orders(); track order.id) {
+        @for (order of filteredOrders(); track order.id) {
         <article class="order-card">
             <div class="order-card-header">
                 <div>
@@ -45,8 +59,10 @@
                 </app-button>
             </div>
             }
+            <a class="invoice-link" [routerLink]="['/orders', order.id, 'invoice']">View invoice</a>
         </article>
         }
     </section>
+    }
     }
 </main>

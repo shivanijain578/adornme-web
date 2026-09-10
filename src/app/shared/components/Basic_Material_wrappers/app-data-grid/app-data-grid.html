@@ -106,17 +106,9 @@
 
                         @case ('image') {
 
-                        @if (
-                        getValue(
-                        row,
-                        column.key
-                        )
-                        ) {
+                        @if (getImageUrl(getValue(row, column.key))) {
 
-                        <img class="grid-image" [src]="getValue(
-                                                        row,
-                                                        column.key
-                                                    )" [alt]="
+                        <img class="grid-image" [src]="getImageUrl(getValue(row, column.key))" [alt]="
                                                         getValue(
                                                             row,
                                                             'name'

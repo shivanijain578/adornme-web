@@ -5,16 +5,11 @@
         <p>Thoughtful jewellery and accessories designed to stay with you.</p>
     </header>
 
-    <nav class="category-strip" aria-label="Browse categories">
-        <a routerLink="/products">All pieces</a>
-        @for (category of categories; track category.id) {
-        <a routerLink="/products" [queryParams]="{ categoryId: category.id }">{{ category.name }}</a>
-        }
-    </nav>
-
     <section class="user-filter-panel" aria-label="Shop filters">
         <app-search-box placeholder="Search jewellery..." [value]="search"
             (valueChange)="search = $event"></app-search-box>
+        <app-dropdown label="Category" placeholder="All categories" [options]="categories" optionLabel="name"
+            optionValue="id" [value]="selectedCategoryId" (valueChange)="selectedCategoryId = $event"></app-dropdown>
         <app-dropdown label="Sort by" [options]="sortOptions" optionLabel="label" optionValue="value" [value]="sortBy"
             (valueChange)="sortBy = $event"></app-dropdown>
         <app-button text="Search collection" icon="search" (clicked)="applyFilters()">
@@ -29,8 +24,8 @@
     <div class="user-product-grid">
         @for (product of products; track product.id) {
         <a class="user-product-card" [routerLink]="['/products', product.id]">
-            @if (product.imageUrl) {
-            <img [src]="product.imageUrl" [alt]="product.name" width="420" height="300" loading="lazy">
+            @if (product.images[0]; as image) {
+            <img [src]="image.imageUrl | assetUrl" [alt]="product.name" width="420" height="300" loading="lazy">
             } @else {
             <div class="product-placeholder">AdornMe</div>
             }
@@ -38,7 +33,11 @@
                 <span>{{ product.categoryName }}</span>
                 <h2>{{ product.name }}</h2>
                 <div>
-                    <strong>₹{{ product.price }}</strong>
+                    <strong>₹{{ product.sellingPrice }}</strong>
+                    @if (product.discountPercentage > 0) {
+                    <del>₹{{ product.originalPrice }}</del>
+                    <small>{{ product.discountPercentage }}% OFF</small>
+                    }
                     <small>{{ product.stockQuantity > 0 ? 'Available' : 'Sold out' }}</small>
                 </div>
             </div>

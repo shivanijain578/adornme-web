@@ -185,6 +185,55 @@
     grid-column: 1 / -1;
 }
 
+.image-upload-field {
+    display: grid;
+    gap: 8px;
+}
+
+.image-upload-field label {
+    color: #7a6652;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.image-upload-field input {
+    width: 100%;
+    padding: 12px;
+    border: 1px dashed #d2c3b3;
+    background: #faf7f2;
+}
+
+.image-upload-field small {
+    color: #7a6652;
+}
+
+.image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.image-preview-grid img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid #e7dfd6;
+}
+
+.image-preview {
+    position: relative;
+}
+
+.image-preview button {
+    width: 100%;
+    padding: 6px;
+    color: #8b3f39;
+    background: #fff3f1;
+    border: 1px solid #e3bbb5;
+    font-size: 12px;
+}
+
 
 /* =========================================================
    VISIBILITY

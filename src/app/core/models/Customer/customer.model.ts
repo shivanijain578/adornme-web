@@ -91,6 +91,7 @@ export interface Order
 
 export interface AdminSummary
 {
+    productsCount?: number;
     ordersCount: number;
     usersCount: number;
     paymentsCount: number;

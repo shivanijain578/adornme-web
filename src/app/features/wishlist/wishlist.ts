@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 import { WishlistItem } from '../../core/models/Customer/customer.model';
 import { CustomerService } from '../../core/services/Customer/customer.service';
 import { AppButton } from '../../shared/components/Basic_Material_wrappers/app-button/app-button';
+import { AssetUrlPipe } from '../../shared/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-wishlist',
-  imports: [RouterLink, AppButton],
+  imports: [RouterLink, AppButton, AssetUrlPipe],
   templateUrl: './wishlist.html',
   styleUrl: './wishlist.scss',
 })

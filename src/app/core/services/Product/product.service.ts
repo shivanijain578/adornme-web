@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { PagedResult } from '../../models/Common/paged-result.model';
 import { ProductQuery } from '../../models/Product/product-query.model';
-import { ProductSummary, ProductDetail, Product, ProductRequest } from '../../models/Product/product.model';
+import { HomeResponse, ProductSummary, ProductDetail, Product, ProductRequest } from '../../models/Product/product.model';
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +19,14 @@ export class ProductService
 
     private readonly homeApiUrl =
         `${environment.apiUrl}/home/products`;
+
+    private readonly homeUrl =
+        `${environment.apiUrl}/home`;
+
+    getHome(): Observable<HomeResponse>
+    {
+        return this.http.get<HomeResponse>(this.homeUrl);
+    }
 
     getHomeProducts(
         categoryId?: number,
@@ -123,14 +131,14 @@ export class ProductService
 
     createProduct(request: ProductRequest): Observable<Product>
     {
-        return this.http.post<Product>(this.apiUrl, request);
+        return this.http.post<Product>(this.apiUrl, this.toFormData(request));
     }
 
     updateProduct(id: number, request: ProductRequest): Observable<Product>
     {
         return this.http.put<Product>(
             `${this.apiUrl}/${id}`,
-            request
+            this.toFormData(request)
         );
     }
 
@@ -139,5 +147,21 @@ export class ProductService
         return this.http.delete<Product>(
             `${this.apiUrl}/${id}`
         );
+    }
+
+    private toFormData(request: ProductRequest): FormData
+    {
+        const formData = new FormData();
+        formData.append('Name', request.name);
+        formData.append('Description', request.description);
+        formData.append('OriginalPrice', request.originalPrice.toString());
+        formData.append('SellingPrice', request.sellingPrice.toString());
+        formData.append('StockQuantity', request.stockQuantity.toString());
+        formData.append('Material', request.material ?? '');
+        formData.append('Gender', request.gender.toString());
+        formData.append('CategoryId', request.categoryId.toString());
+        formData.append('IsActive', request.isActive.toString());
+        request.images?.forEach(image => formData.append('Images', image, image.name));
+        return formData;
     }
 }

@@ -4,10 +4,11 @@ import { Cart as CartModel } from '../../core/models/Customer/customer.model';
 import { CustomerService } from '../../core/services/Customer/customer.service';
 import { AppButton } from '../../shared/components/Basic_Material_wrappers/app-button/app-button';
 import { AppFormField } from '../../shared/components/Basic_Material_wrappers/app-form-field/app-form-field';
+import { AssetUrlPipe } from '../../shared/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-cart',
-  imports: [RouterLink, AppButton, AppFormField],
+  imports: [RouterLink, AppButton, AppFormField, AssetUrlPipe],
   templateUrl: './cart.html',
   styleUrl: './cart.scss',
 })

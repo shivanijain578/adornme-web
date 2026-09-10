@@ -1,0 +1,90 @@
+.admin-page {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 60px 0 90px;
+}
+
+.admin-heading {
+    margin-bottom: 32px;
+}
+
+.admin-heading h1 {
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: .9;
+    margin-bottom: 12px;
+}
+
+.admin-form {
+    display: grid;
+    grid-template-columns: 1.4fr .7fr 1fr 1fr 1fr auto;
+    gap: 10px;
+    padding: 20px;
+    margin-bottom: 28px;
+    background: var(--paper-deep);
+    border: 1px solid var(--line);
+}
+
+.admin-form input,
+.admin-form select {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--line);
+    background: var(--white);
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.inventory-grid article {
+    display: grid;
+    gap: 8px;
+    padding: 18px;
+    background: var(--white);
+    border: 1px solid var(--line);
+}
+
+.inventory-grid span,
+.inventory-grid small {
+    color: var(--ink-soft);
+    font-size: .82rem;
+}
+
+.inventory-grid small {
+    color: var(--success);
+}
+
+.transactions {
+    margin-top: 44px;
+}
+
+.transactions h2 {
+    font-size: 1.7rem;
+}
+
+.transactions div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: .82rem;
+}
+
+@media (max-width: 800px) {
+    .admin-page {
+        width: min(100% - 32px, 1180px);
+    }
+
+    .admin-form,
+    .inventory-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .transactions div {
+        flex-direction: column;
+    }
+}

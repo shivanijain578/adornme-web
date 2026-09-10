@@ -46,7 +46,7 @@ import { AdminSummary } from '../../../core/models/Customer/customer.model';
     AppSearchBox,
     AppFilterPanel,
     AppDataGrid,
-    AppPagination
+    AppPagination,
   ],
 
   templateUrl: './admin-product-list.html',
@@ -151,7 +151,7 @@ export class AdminProductList implements OnInit
   productColumns: GridColumn<Product>[] = [
 
     {
-      key: 'imageUrl',
+      key: 'images',
       header: 'Product',
       type: 'image',
       width: '90px'
@@ -171,7 +171,7 @@ export class AdminProductList implements OnInit
     },
 
     {
-      key: 'price',
+      key: 'sellingPrice',
       header: 'Price',
       type: 'currency',
       sortable: true

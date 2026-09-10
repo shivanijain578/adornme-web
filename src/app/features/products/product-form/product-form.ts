@@ -49,6 +49,7 @@ import { AppCheckbox } from '../../../shared/components/Basic_Material_wrappers/
 import { AppDropdown } from '../../../shared/components/Basic_Material_wrappers/app-dropdown/app-dropdown';
 import { AppFormField } from '../../../shared/components/Basic_Material_wrappers/app-form-field/app-form-field';
 import { AppTextarea } from '../../../shared/components/Basic_Material_wrappers/app-textarea/app-textarea';
+import { AssetUrlPipe } from '../../../shared/pipes/asset-url.pipe';
 
 
 @Component({
@@ -65,7 +66,8 @@ import { AppTextarea } from '../../../shared/components/Basic_Material_wrappers/
         AppTextarea,
         AppDropdown,
         AppCheckbox,
-        AppButton
+        AppButton,
+        AssetUrlPipe
     ],
 
     templateUrl: './product-form.html',
@@ -118,6 +120,9 @@ export class ProductForm implements OnInit
     isSaving = false;
 
     errorMessage = '';
+    selectedImages: File[] = [];
+    selectedImageUrls: string[] = [];
+    existingImageUrls: string[] = [];
 
 
     // =====================================================
@@ -142,12 +147,17 @@ export class ProductForm implements OnInit
             ]
         ],
 
-        price: [
+        originalPrice: [
             0,
             [
                 Validators.required,
                 Validators.min(0)
             ]
+        ],
+
+        sellingPrice: [
+            0,
+            [Validators.required, Validators.min(0)]
         ],
 
         stockQuantity: [
@@ -158,9 +168,9 @@ export class ProductForm implements OnInit
             ]
         ],
 
-        imageUrl: [
-            ''
-        ],
+        material: [''],
+
+        gender: [0],
 
         categoryId: [
             0,
@@ -221,7 +231,10 @@ export class ProductForm implements OnInit
         this.errorMessage = '';
 
 
-        const request = this.productForm.getRawValue();
+        const request: ProductRequest = {
+            ...this.productForm.getRawValue(),
+            images: this.selectedImages
+        };
 
 
         const saveRequest =
@@ -272,6 +285,39 @@ export class ProductForm implements OnInit
             }
 
         });
+    }
+
+    onImagesSelected(event: Event): void
+    {
+        const input = event.target as HTMLInputElement;
+        const files = Array.from(input.files ?? []);
+        if (files.length > 3)
+        {
+            this.errorMessage = 'Choose a maximum of 3 product images.';
+            input.value = '';
+            return;
+        }
+
+        const invalidFile = files.find(file => !file.type.startsWith('image/') || file.size > 5 * 1024 * 1024);
+        if (invalidFile)
+        {
+            this.errorMessage = 'Images must be valid image files smaller than 5 MB.';
+            input.value = '';
+            return;
+        }
+
+        this.errorMessage = '';
+        this.selectedImages = files;
+        this.selectedImageUrls.forEach(url => URL.revokeObjectURL(url));
+        this.selectedImageUrls = files.map(file => URL.createObjectURL(file));
+    }
+
+    removeSelectedImage(index: number): void
+    {
+        const previewUrl = this.selectedImageUrls[index];
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        this.selectedImages = this.selectedImages.filter((_, currentIndex) => currentIndex !== index);
+        this.selectedImageUrls = this.selectedImageUrls.filter((_, currentIndex) => currentIndex !== index);
     }
 
 
@@ -333,6 +379,7 @@ export class ProductForm implements OnInit
                     this.productForm.patchValue(
                         this.toFormValue(product)
                     );
+                    this.existingImageUrls = product.images.map(image => image.imageUrl);
 
                     this.isLoading = false;
 
@@ -378,14 +425,20 @@ export class ProductForm implements OnInit
             description:
                 product.description,
 
-            price:
-                product.price,
+            originalPrice:
+                product.originalPrice,
+
+            sellingPrice:
+                product.sellingPrice,
 
             stockQuantity:
                 product.stockQuantity,
 
-            imageUrl:
-                product.imageUrl ?? '',
+            material:
+                product.material ?? '',
+
+            gender:
+                product.gender,
 
             categoryId:
                 product.categoryId,

@@ -1,0 +1,40 @@
+<main class="admin-page">
+    <header class="admin-heading">
+        <p class="eyebrow">Admin studio</p>
+        <h1>Offers.</h1>
+        <p>Create and manage backend-calculated promotions.</p>
+    </header>
+    @if (errorMessage()) { <p class="error" role="alert">{{ errorMessage() }}</p> }
+    <form class="admin-form" [formGroup]="form" (ngSubmit)="save()">
+        <input formControlName="name" placeholder="Offer name" aria-label="Offer name">
+        <select formControlName="offerType" aria-label="Offer type">
+            <option [ngValue]="1">Percentage</option>
+            <option [ngValue]="2">Flat</option>
+        </select>
+        <select formControlName="scope" aria-label="Offer scope">
+            <option [ngValue]="1">Entire store</option>
+            <option [ngValue]="2">Products</option>
+            <option [ngValue]="3">Categories</option>
+        </select>
+        <input formControlName="discountValue" type="number" min=".01" placeholder="Value" aria-label="Discount value">
+        <label>Starts <input formControlName="startDate" type="date"></label><label>Ends <input
+                formControlName="endDate" type="date"></label>
+        <input formControlName="productIds" placeholder="Product IDs, comma separated" aria-label="Product IDs">
+        <input formControlName="categoryIds" placeholder="Category IDs, comma separated" aria-label="Category IDs">
+        <label class="checkbox"><input formControlName="isActive" type="checkbox"> Active</label>
+        <div class="form-actions"><app-button [text]="editingId() ? 'Save changes' : 'Create offer'" type="submit"
+                [loading]="isSaving()"></app-button><app-button text="Clear" appearance="text" type="button"
+                (clicked)="reset()"></app-button></div>
+    </form>
+    @if (isLoading()) { <p>Loading...</p> } @else if (offers().length === 0) { <p>No offers found.</p> } @else {
+    <section class="admin-list">@for (offer of offers(); track offer.id) { <article class="admin-row">
+            <div><strong>{{ offer.name }}</strong><span>{{ offer.offerType === 1 ? 'Percentage' : 'Flat' }} ·
+                    {{ offer.discountValue }} · scope {{ offer.scope }}</span></div><span
+                class="status">{{ offer.isActive ? 'Active' : 'Inactive' }}</span>
+            <div class="row-actions"><app-button text="Edit" appearance="text"
+                    (clicked)="edit(offer)"></app-button><app-button [text]="offer.isActive ? 'Disable' : 'Activate'"
+                    appearance="text" (clicked)="toggle(offer)"></app-button><app-button text="Delete" appearance="text"
+                    (clicked)="remove(offer)"></app-button></div>
+        </article> }</section>
+    }
+</main>

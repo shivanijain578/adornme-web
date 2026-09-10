@@ -1,0 +1,26 @@
+<main class="info-page">
+    @if (isLoading()) {
+    <p class="info-status">Loading...</p>
+    } @else if (errorMessage()) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+    } @else if (about(); as info) {
+    <header class="info-heading">
+        <p class="eyebrow">{{ info.brandName }}</p>
+        <h1>{{ info.title }}</h1>
+        <p>{{ info.description }}</p>
+    </header>
+
+    <section class="values" aria-labelledby="values-title">
+        <p class="eyebrow">What guides us</p>
+        <h2 id="values-title">Jewellery with intention.</h2>
+        <div class="values-grid">
+            @for (value of info.values; track value) {
+            <article>
+                <span aria-hidden="true">✦</span>
+                <h3>{{ value }}</h3>
+            </article>
+            }
+        </div>
+    </section>
+    }
+</main>

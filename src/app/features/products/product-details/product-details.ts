@@ -5,12 +5,14 @@ import { ProductDetail, ProductSummary } from '../../../core/models/Product/prod
 import { AuthService } from '../../../core/services/Auth/auth.service';
 import { CustomerService } from '../../../core/services/Customer/customer.service';
 import { AppButton } from '../../../shared/components/Basic_Material_wrappers/app-button/app-button';
+import { AssetUrlPipe } from '../../../shared/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-product-details',
   imports: [
     RouterLink,
-    AppButton
+    AppButton,
+    AssetUrlPipe
   ],
   templateUrl: './product-details.html',
   styleUrl: './product-details.scss',

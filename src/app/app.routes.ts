@@ -30,6 +30,16 @@ export const routes: Routes = [
     },
 
     {
+        path: 'about',
+        loadComponent: () => import('./features/about/about').then(m => m.About)
+    },
+
+    {
+        path: 'support',
+        loadComponent: () => import('./features/support/support').then(m => m.Support)
+    },
+
+    {
         path: 'products',
         component: UserProductList
     },
@@ -41,8 +51,44 @@ export const routes: Routes = [
     },
 
     {
+        path: 'admin/dashboard',
+        loadComponent: () => import('./features/admin/dashboard/dashboard').then(m => m.Dashboard),
+        canActivate: [adminGuard]
+    },
+
+    {
         path: 'admin/products',
         component: AdminProductList,
+        canActivate: [adminGuard]
+    },
+
+    {
+        path: 'admin/offers',
+        loadComponent: () => import('./features/admin/offers/offers').then(m => m.Offers),
+        canActivate: [adminGuard]
+    },
+
+    {
+        path: 'admin/banners',
+        loadComponent: () => import('./features/admin/banners/banners').then(m => m.Banners),
+        canActivate: [adminGuard]
+    },
+
+    {
+        path: 'admin/inventory',
+        loadComponent: () => import('./features/admin/inventory/inventory').then(m => m.Inventory),
+        canActivate: [adminGuard]
+    },
+
+    {
+        path: 'admin/orders',
+        loadComponent: () => import('./features/admin/orders/orders').then(m => m.AdminOrders),
+        canActivate: [adminGuard]
+    },
+
+    {
+        path: 'admin/orders/:id',
+        loadComponent: () => import('./features/admin/orders/order-detail').then(m => m.AdminOrderDetail),
         canActivate: [adminGuard]
     },
 
@@ -89,6 +135,18 @@ export const routes: Routes = [
     {
         path: 'orders',
         component: Orders,
+        canActivate: [authGuard]
+    },
+
+    {
+        path: 'orders/:id/invoice',
+        loadComponent: () => import('./features/invoice/invoice').then(m => m.InvoicePage),
+        canActivate: [authGuard]
+    },
+
+    {
+        path: 'orders/:id',
+        loadComponent: () => import('./features/order-detail/order-detail').then(m => m.OrderDetail),
         canActivate: [authGuard]
     },
 

@@ -1,48 +1,120 @@
-import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
-import { Category } from '../../core/models/Category/category.model';
-import { ProductSummary } from '../../core/models/Product/product.model';
-import { CategoryService } from '../../core/services/Category/category.service';
+import { HomeBanner, ProductSummary } from '../../core/models/Product/product.model';
 import { ProductService } from '../../core/services/Product/product.service';
+import { AssetUrlPipe } from '../../shared/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, AssetUrlPipe],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home implements OnInit
+export class Home implements OnInit, OnDestroy
 {
   private readonly productService = inject(ProductService);
-  private readonly categoryService = inject(CategoryService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  categories: Category[] = [];
+  categories: { id: number; name: string; description?: string }[] = [];
   bestsellers: ProductSummary[] = [];
+  banners: HomeBanner[] = [];
+
+  activeBannerIndex = 0;
   isLoading = true;
+  showPreloader = true;
+  pageReady = false;
   errorMessage = '';
+
+  readonly logoLetters = Array.from('adornme');
+
+  private hideLoaderTimer?: ReturnType<typeof setTimeout>;
+  private bannerTimer?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void
   {
-    forkJoin({
-      categories: this.categoryService.getHomeCategories(),
-      products: this.productService.getHomeProducts(undefined, 1, 4)
-    }).subscribe({
+    this.productService.getHome().subscribe({
       next: response =>
       {
-        this.categories = response.categories;
-        this.bestsellers = response.products;
+        this.categories = response.categories ?? [];
+        this.bestsellers = response.bestSellers ?? [];
+        this.banners = response.banners ?? [];
+        this.activeBannerIndex = 0;
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.pageReady = true;
 
+        // Let the final logo animation finish before revealing the store.
+        this.hideLoaderTimer = setTimeout(() =>
+        {
+          this.showPreloader = false;
+          this.cdr.detectChanges();
+        }, 650);
+
+        this.startBannerRotation();
+        this.cdr.detectChanges();
       },
       error: () =>
       {
-        this.errorMessage = 'Unable to load the collection.';
+        this.errorMessage = 'Unable to load the collection. Please try again.';
         this.isLoading = false;
+        this.pageReady = true;
+
+        this.hideLoaderTimer = setTimeout(() =>
+        {
+          this.showPreloader = false;
+          this.cdr.detectChanges();
+        }, 650);
+
         this.cdr.detectChanges();
       }
     });
+  }
+
+  previousBanner(): void
+  {
+    if (this.banners.length > 1)
+    {
+      this.activeBannerIndex =
+        (this.activeBannerIndex - 1 + this.banners.length) % this.banners.length;
+      this.restartBannerRotation();
+    }
+  }
+
+  nextBanner(): void
+  {
+    if (this.banners.length > 1)
+    {
+      this.activeBannerIndex =
+        (this.activeBannerIndex + 1) % this.banners.length;
+      this.restartBannerRotation();
+    }
+  }
+
+  selectBanner(index: number): void
+  {
+    this.activeBannerIndex = index;
+    this.restartBannerRotation();
+  }
+
+  private startBannerRotation(): void
+  {
+    if (this.banners.length <= 1) return;
+
+    this.bannerTimer = setInterval(() =>
+    {
+      this.activeBannerIndex = (this.activeBannerIndex + 1) % this.banners.length;
+      this.cdr.detectChanges();
+    }, 5500);
+  }
+
+  private restartBannerRotation(): void
+  {
+    if (this.bannerTimer) clearInterval(this.bannerTimer);
+    this.startBannerRotation();
+  }
+
+  ngOnDestroy(): void
+  {
+    if (this.hideLoaderTimer) clearTimeout(this.hideLoaderTimer);
+    if (this.bannerTimer) clearInterval(this.bannerTimer);
   }
 }

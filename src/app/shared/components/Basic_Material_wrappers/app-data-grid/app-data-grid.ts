@@ -29,6 +29,7 @@ import
 
 } from '../../../models/ui/data-grid.model';
 import { DatePipe } from '@angular/common';
+import { AssetUrlPipe } from '../../../pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-data-grid',
@@ -36,6 +37,7 @@ import { DatePipe } from '@angular/common';
 
   imports: [
     DatePipe,
+    AssetUrlPipe,
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule
@@ -46,6 +48,7 @@ import { DatePipe } from '@angular/common';
 })
 export class AppDataGrid<T extends object>
 {
+  private readonly assetUrl = new AssetUrlPipe();
 
   @Input() columns:
     GridColumn<T>[] = [];
@@ -102,6 +105,36 @@ export class AppDataGrid<T extends object>
     return (
       row as Record<string, any>
     )[key];
+  }
+
+  getImageUrl(value: unknown): string
+  {
+    let imageUrl: string | undefined;
+
+    if (typeof value === 'string')
+    {
+      imageUrl = value;
+    }
+    else if (Array.isArray(value))
+    {
+      const image = value.find(item =>
+        typeof item === 'object' &&
+        item !== null &&
+        'imageUrl' in item &&
+        typeof item.imageUrl === 'string'
+      );
+
+      if (image && typeof image === 'object' && 'imageUrl' in image)
+      {
+        imageUrl = image.imageUrl as string;
+      }
+    }
+    else if (typeof value === 'object' && value !== null && 'imageUrl' in value)
+    {
+      imageUrl = typeof value.imageUrl === 'string' ? value.imageUrl : undefined;
+    }
+
+    return this.assetUrl.transform(imageUrl);
   }
 
 

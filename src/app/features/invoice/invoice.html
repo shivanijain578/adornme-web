@@ -1,0 +1,64 @@
+<main class="invoice-page">
+    @if (isLoading()) {
+    <p>Loading...</p>
+    } @else if (errorMessage()) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+    } @else if (invoice(); as currentInvoice) {
+    <div class="invoice-actions">
+        <a routerLink="/orders">Back to orders</a>
+        <app-button text="Download Invoice" icon="print" (clicked)="print()"></app-button>
+    </div>
+
+    <article class="invoice-sheet">
+        <header class="invoice-header">
+            <div>
+                <p class="eyebrow">Adornme</p>
+                <h1>Invoice</h1>
+            </div>
+            <div class="invoice-meta">
+                <strong>{{ currentInvoice.invoiceNumber }}</strong>
+                <span>Order #{{ currentInvoice.orderId }}</span>
+                <time [dateTime]="currentInvoice.orderDate">{{ currentInvoice.orderDate | date:'mediumDate' }}</time>
+            </div>
+        </header>
+
+        <section class="invoice-customer">
+            <div>
+                <span>Customer</span><strong>{{ currentInvoice.customer.name }}</strong><small>{{ currentInvoice.customer.email }}</small>
+            </div>
+            @if (currentInvoice.billingAddress; as address) {
+            <address><span>Delivery
+                    address</span><strong>{{ address.fullName }}</strong><span>{{ address.addressLine1 }}</span><span>{{ address.addressLine2 }}</span><span>{{ address.city }},
+                    {{ address.state }} {{ address.postalCode }}</span></address>
+            }
+        </section>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Unit price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (item of currentInvoice.items; track item.productId) {
+                <tr>
+                    <td>{{ item.productName }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unitPrice | currency:'INR':'symbol':'1.0-2' }}</td>
+                    <td>{{ item.total | currency:'INR':'symbol':'1.0-2' }}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="invoice-total">
+            <span>Subtotal</span><strong>{{ currentInvoice.subtotal | currency:'INR':'symbol':'1.0-2' }}</strong><span>Total</span><strong>{{ currentInvoice.totalAmount | currency:'INR':'symbol':'1.0-2' }}</strong>
+        </div>
+        <footer class="invoice-footer">Payment: {{ currentInvoice.payment?.method || 'Not available' }} · Status:
+            {{ currentInvoice.status }}</footer>
+    </article>
+    }
+</main>

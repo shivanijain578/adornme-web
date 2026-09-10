@@ -3,13 +3,14 @@ import { RouterLink, Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { AuthService } from '../../../core/services/Auth/auth.service';
 import { AppButton } from '../Basic_Material_wrappers/app-button/app-button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-navbar',
   imports: [
     RouterLink,
     NgOptimizedImage,
-    AppButton
+    MatIconModule
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',

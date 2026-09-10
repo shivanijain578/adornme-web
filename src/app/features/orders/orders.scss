@@ -26,6 +26,31 @@
     gap: 16px;
 }
 
+.order-status-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin-bottom: 24px;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+}
+
+.order-status-tabs button {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 10px 16px;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+.order-status-tabs button.active {
+    color: var(--white);
+    background: var(--ink);
+    border-color: var(--ink);
+}
+
 .order-card {
     padding: 24px;
     background: var(--white);
@@ -152,4 +177,13 @@
     margin-top: 16px;
     padding-top: 12px;
     border-top: 1px solid var(--divider);
+}
+
+.invoice-link {
+    display: inline-block;
+    margin-top: 14px;
+    color: var(--brand-deep);
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
 }

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { WishlistItem, Cart, Profile, Address, CreateAddressRequest, CheckoutRequest, CheckoutResult, Order } from '../../models/Customer/customer.model';
+import { Invoice } from '../../models/Customer/invoice.model';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerService
@@ -82,6 +83,16 @@ export class CustomerService
     getOrders(): Observable<Order[]>
     {
         return this.http.get<Order[]>(`${this.apiUrl}/orders`);
+    }
+
+    getOrder(orderId: number): Observable<Order>
+    {
+        return this.http.get<Order>(`${this.apiUrl}/orders/${orderId}`);
+    }
+
+    getInvoice(orderId: number): Observable<Invoice>
+    {
+        return this.http.get<Invoice>(`${this.apiUrl}/orders/${orderId}/invoice`);
     }
 
     cancelOrder(orderId: number): Observable<{ message: string; status: string }>

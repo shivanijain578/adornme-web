@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { DatePipe, LowerCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CustomerService } from '../../core/services/Customer/customer.service';
 import { Order } from '../../core/models/Customer/customer.model';
@@ -7,7 +7,7 @@ import { AppButton } from '../../shared/components/Basic_Material_wrappers/app-b
 
 @Component({
     selector: 'app-orders',
-    imports: [DatePipe, RouterLink, AppButton],
+    imports: [DatePipe, LowerCasePipe, RouterLink, AppButton],
     templateUrl: './orders.html',
     styleUrl: './orders.scss'
 })
@@ -17,9 +17,23 @@ export class Orders implements OnInit
     private readonly cdr = inject(ChangeDetectorRef);
 
     orders = signal<Order[]>([]);
+    selectedStatus = signal('All');
+    readonly statuses = ['All', 'Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled', 'Returned'];
+    filteredOrders = computed(() =>
+    {
+        const status = this.selectedStatus();
+        return status === 'All'
+            ? this.orders()
+            : this.orders().filter(order => order.status === status);
+    });
     isLoading = signal(true);
     errorMessage = signal('');
     cancellingOrderId = signal<number | null>(null);
+
+    selectStatus(status: string): void
+    {
+        this.selectedStatus.set(status);
+    }
 
     cancelOrder(order: Order): void
     {

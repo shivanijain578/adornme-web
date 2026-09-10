@@ -1,0 +1,24 @@
+<main class="admin-dashboard">
+    <header class="dashboard-heading">
+        <p class="eyebrow">Admin studio</p>
+        <h1>Dashboard.</h1>
+        <p>A clear view of the Adornme store, based on live account data.</p>
+    </header>
+
+    @if (isLoading()) {
+    <p>Loading...</p>
+    } @else if (errorMessage()) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+    } @else if (summary(); as data) {
+    <section class="metrics" aria-label="Store metrics">
+        <article><span>Total orders</span><strong>{{ data.ordersCount }}</strong><a routerLink="/admin/orders">View
+                orders</a></article>
+        <article><span>Total sales</span><strong>₹{{ data.totalRevenue }}</strong></article>
+        <article><span>Pending orders</span><strong>{{ data.pendingOrders }}</strong></article>
+        <article><span>Delivered orders</span><strong>{{ data.deliveredOrders }}</strong></article>
+        <article><span>Products</span><strong>{{ data.productsCount ?? 'Unavailable' }}</strong><a
+                routerLink="/admin/products">Manage products</a></article>
+        <article><span>Customers</span><strong>{{ data.usersCount }}</strong></article>
+    </section>
+    }
+</main>

@@ -1,0 +1,26 @@
+<main class="admin-page">@if (isLoading()) { <p>Loading...</p> } @else if (errorMessage()) { <p class="error"
+        role="alert">{{ errorMessage() }}</p> } @else if (order(); as currentOrder) { <a routerLink="/admin/orders">Back
+        to orders</a>
+    <header class="admin-heading">
+        <p class="eyebrow">Order #{{ currentOrder.id }}</p>
+        <h1>{{ currentOrder.status }}</h1>
+        <p>{{ currentOrder.customerEmail }} · {{ currentOrder.createdAt | date:'mediumDate' }}</p>
+    </header>
+    <section class="detail-grid">
+        <div>
+            <h2>Items</h2>@for (item of currentOrder.items; track item.productId) { <div class="detail-row">
+                <span>{{ item.productName }} ×
+                    {{ item.quantity }}</span><strong>₹{{ item.unitPrice * item.quantity }}</strong></div> }<div
+                class="detail-row total"><span>Total</span><strong>₹{{ currentOrder.totalAmount }}</strong></div>
+        </div>
+        <aside>
+            <h2>Delivery</h2>
+            <p>{{ currentOrder.address }}</p>
+            <h2>Payment</h2>
+            <p>{{ currentOrder.payment?.method || 'Not available' }}</p>
+        </aside>
+    </section>
+    <div class="status-actions"><span>Allowed transitions</span>@for (transition of transitions[currentOrder.status] ||
+        []; track transition.value) { <app-button [text]="transition.label" appearance="stroked" [loading]="isSaving()"
+            [disabled]="isSaving()" (clicked)="update(transition.value)"></app-button> }</div> }
+</main>

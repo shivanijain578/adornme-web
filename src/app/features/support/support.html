@@ -1,0 +1,36 @@
+<main class="info-page support-page">
+    @if (isLoading()) {
+    <p class="info-status">Loading...</p>
+    } @else if (errorMessage()) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+    } @else if (support(); as info) {
+    <header class="info-heading">
+        <p class="eyebrow">We're here to help</p>
+        <h1>{{ info.title }}</h1>
+        <p>Reach the Adornme team for thoughtful help with every part of your order.</p>
+        <div class="support-actions">
+            <a [href]="'mailto:' + info.email">Email Support</a>
+            <a [href]="'tel:' + info.phone">Call Support</a>
+        </div>
+    </header>
+
+    <section class="support-contact" aria-label="Support contact details">
+        <div><span>Email</span><a [href]="'mailto:' + info.email">{{ info.email }}</a></div>
+        <div><span>Phone</span><a [href]="'tel:' + info.phone">{{ info.phone }}</a></div>
+        <div><span>Working hours</span><strong>{{ info.workingHours }}</strong></div>
+    </section>
+
+    <section class="support-topics" aria-labelledby="support-topics-title">
+        <p class="eyebrow">Common questions</p>
+        <h2 id="support-topics-title">How can we help?</h2>
+        <div class="topic-grid">
+            @for (section of info.sections; track section.title) {
+            <article>
+                <h3>{{ section.title }}</h3>
+                <p>{{ section.description }}</p>
+            </article>
+            }
+        </div>
+    </section>
+    }
+</main>

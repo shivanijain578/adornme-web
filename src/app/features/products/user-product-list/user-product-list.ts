@@ -8,9 +8,10 @@ import { CategoryService } from '../../../core/services/Category/category.servic
 import { AppButton } from '../../../shared/components/Basic_Material_wrappers/app-button/app-button';
 import { AppDropdown } from '../../../shared/components/Basic_Material_wrappers/app-dropdown/app-dropdown';
 import { AppSearchBox } from '../../../shared/components/Basic_Material_wrappers/app-search-box/app-search-box';
+import { AssetUrlPipe } from '../../../shared/pipes/asset-url.pipe';
 @Component({
   selector: 'app-user-product-list',
-  imports: [FormsModule, RouterModule, AppButton, AppDropdown, AppSearchBox],
+  imports: [FormsModule, RouterModule, AppButton, AppDropdown, AppSearchBox, AssetUrlPipe],
   templateUrl: './user-product-list.html',
   styleUrl: './user-product-list.scss',
 })

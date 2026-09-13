@@ -1,0 +1,284 @@
+<main class="page category-form-page">
+
+    <a class="back-link" routerLink="/admin/categories">
+
+        ← Back to categories
+
+    </a>
+
+
+    <header class="page-header category-form-header">
+
+        <div class="page-header-content">
+            <p class="eyebrow">
+                Admin studio
+            </p>
+
+            <h1 class="page-title">
+                {{ isEditMode ? 'Edit category.' : 'Add category.' }}
+            </h1>
+
+            <p class="page-description">
+                {{
+                    isEditMode
+                        ? 'Keep this collection category clear and current.'
+                        : 'Create a category for the AdornMe collection.'
+                }}
+            </p>
+        </div>
+
+    </header>
+
+
+    <form class="form-card category-form" [formGroup]="categoryForm" (ngSubmit)="submit()">
+
+
+        @if (errorMessage) {
+
+        <div class="error-message" role="alert">
+
+            {{ errorMessage }}
+
+        </div>
+
+        }
+
+
+        <div class="form-layout">
+
+
+            <!-- CATEGORY IMAGE -->
+
+            <section class="image-section">
+
+                <div class="section-label">
+                    Category image
+                </div>
+
+
+                <div class="image-upload" [class.has-image]="
+                        imagePreview ||
+                        existingImageUrl
+                    " [class.is-loading]="isImageLoading">
+
+
+                    @if (isImageLoading) {
+
+                    <div class="image-loading" aria-live="polite">
+
+                        <div class="image-spinner"></div>
+
+                        <strong>
+                            Processing image...
+                        </strong>
+
+                        <span>
+                            Please wait
+                        </span>
+
+                    </div>
+
+                    }
+
+
+                    @else if (imagePreview) {
+
+                    <img class="image-preview" [src]="imagePreview" alt="New category image preview">
+
+
+                    <div class="image-overlay">
+
+                        <button type="button" class="change-image-button" (click)="imageInput.click()">
+
+                            Change image
+
+                        </button>
+
+
+                        <button type="button" class="remove-image-button" (click)="removeSelectedImage()">
+
+                            {{ isEditMode ? 'Revert' : 'Remove' }}
+
+                        </button>
+
+                    </div>
+
+                    }
+
+
+                    @else if (existingImageUrl) {
+
+                    <img class="image-preview" [src]="existingImageUrl | assetUrl" alt="Category image">
+
+
+                    <div class="image-overlay">
+
+                        <button type="button" class="change-image-button" (click)="imageInput.click()">
+
+                            Change image
+
+                        </button>
+
+                    </div>
+
+                    }
+
+
+                    @else {
+
+                    <label class="upload-content" for="category-image">
+
+                        <span class="upload-icon">
+                            +
+                        </span>
+
+                        <strong>
+                            Upload category image
+                        </strong>
+
+                        <span>
+                            Click to choose an image
+                        </span>
+
+                        <small>
+                            JPG, PNG or WEBP · Max 5 MB
+                        </small>
+
+                    </label>
+
+                    }
+
+
+                    <input #imageInput id="category-image" class="hidden-file-input" type="file"
+                        accept="image/jpeg,image/png,image/webp" (change)="onImageSelected($event)"
+                        [disabled]="isImageLoading">
+
+                </div>
+
+
+                @if (imagePreview && isEditMode) {
+
+                <p class="replacement-note">
+                    New image selected. Save changes to replace the current image.
+                </p>
+
+                }
+
+
+                @if (imageErrorMessage) {
+
+                <p class="image-error" role="alert">
+
+                    {{ imageErrorMessage }}
+
+                </p>
+
+                }
+
+            </section>
+
+
+
+            <!-- CATEGORY DETAILS -->
+
+            <section class="details-section">
+
+
+                <div class="form-section-header">
+
+                    <span class="section-number">
+                        01
+                    </span>
+
+
+                    <div>
+
+                        <h2>
+                            Category details
+                        </h2>
+
+                        <p>
+                            The information customers will see.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stack-md form-fields">
+
+
+                    <app-form-field label="Category name" placeholder="Name" formControlName="name">
+
+                    </app-form-field>
+
+
+
+                    <app-textarea label="Description" placeholder="Describe this category..." [rows]="5"
+                        [maxLength]="500" formControlName="description">
+
+                    </app-textarea>
+
+
+
+                    <div class="visibility-card">
+
+                        <div>
+
+                            <strong>
+                                Collection visibility
+                            </strong>
+
+                            <p>
+                                Hidden categories won't appear on the customer storefront.
+                            </p>
+
+                        </div>
+
+
+                        <app-checkbox label="Visible" formControlName="isVisible">
+
+                        </app-checkbox>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- ACTIONS -->
+
+        <div class="form-actions actions-end">
+
+            <a routerLink="/admin/categories" class="cancel-link">
+
+                Cancel
+
+            </a>
+
+
+            <app-button type="submit" [loading]="isSaving" [disabled]="
+                    categoryForm.invalid ||
+                    isSaving ||
+                    isImageLoading
+                " [text]="
+                    isSaving
+                        ? (isEditMode ? 'Saving...' : 'Creating...')
+                        : (isEditMode ? 'Save changes' : 'Create category')
+                ">
+
+            </app-button>
+
+        </div>
+
+
+    </form>
+
+</main>

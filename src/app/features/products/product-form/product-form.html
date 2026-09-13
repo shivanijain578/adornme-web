@@ -1,39 +1,33 @@
-<div class="product-form-page">
-
-    <!-- Back -->
+<div class="page product-form-page">
 
     <a class="back-link" routerLink="/admin/products">
-
         <mat-icon>
             arrow_back
         </mat-icon>
 
         Back to product management
-
     </a>
 
 
-    <!-- Header -->
+    <header class="page-header">
 
-    <header class="form-heading">
+        <div class="page-header-content">
+            <p class="eyebrow">
+                Admin studio
+            </p>
 
-        <p class="eyebrow">
-            Admin studio
-        </p>
+            <h1 class="page-title">
+                {{ isEditMode ? 'Edit a piece.' : 'Add a new piece.' }}
+            </h1>
 
-        <h1>
-            {{ isEditMode ? 'Edit a piece.' : 'Add a new piece.' }}
-        </h1>
-
-        <p>
-            Keep the AdornMe collection considered,
-            clear, and current.
-        </p>
+            <p class="page-description">
+                Keep the AdornMe collection considered,
+                clear, and current.
+            </p>
+        </div>
 
     </header>
 
-
-    <!-- Loading -->
 
     @if (isLoading) {
 
@@ -50,26 +44,7 @@
 
     } @else {
 
-    <form class="product-form" [formGroup]="productForm" (ngSubmit)="submit()">
-
-
-        <!-- Error -->
-
-        @if (errorMessage) {
-
-        <div class="error" role="alert">
-
-            <mat-icon>
-                error_outline
-            </mat-icon>
-
-            <span>
-                {{ errorMessage }}
-            </span>
-
-        </div>
-
-        }
+    <form class="stack-lg product-form" [formGroup]="productForm" (ngSubmit)="submit()">
 
 
         <!-- Product Information -->
@@ -110,28 +85,88 @@
 
                 </div>
 
+
+                <!-- Images -->
+
                 <div class="form-group-wide image-upload-field">
-                    <label for="product-images">Product images</label>
+
+                    <label for="product-images">
+                        Product images
+                    </label>
+
+
                     <input id="product-images" type="file" accept="image/*" multiple
                         (change)="onImagesSelected($event)">
-                    <small>Choose up to 3 images, 5 MB each.</small>
+
+
+                    <small>
+                        Choose up to 3 images,
+                        5 MB each.
+                    </small>
+
+
+                    @if (imageErrorMessage) {
+
+                    <div class="field-error" role="alert">
+
+                        <mat-icon>
+                            error_outline
+                        </mat-icon>
+
+                        <span>
+                            {{ imageErrorMessage }}
+                        </span>
+
+                    </div>
+
+                    }
+
+
                     @if (existingImageUrls.length > 0) {
+
                     <div class="image-preview-grid">
-                        @for (imageUrl of existingImageUrls; track imageUrl) {
+
+                        @for (
+                        imageUrl of existingImageUrls;
+                        track imageUrl
+                        ) {
+
                         <img [src]="imageUrl | assetUrl" alt="Existing product image" width="160" height="120">
+
                         }
+
                     </div>
+
                     }
+
+
                     @if (selectedImages.length > 0) {
+
                     <div class="image-preview-grid">
-                        @for (imageUrl of selectedImageUrls; track imageUrl; let index = $index) {
+
+                        @for (
+                        imageUrl of selectedImageUrls;
+                        track imageUrl;
+                        let index = $index
+                        ) {
+
                         <div class="image-preview">
+
                             <img [src]="imageUrl" [alt]="selectedImages[index].name" width="160" height="120">
-                            <button type="button" (click)="removeSelectedImage(index)">Remove</button>
+
+
+                            <button type="button" (click)="removeSelectedImage(index)">
+                                Remove
+                            </button>
+
                         </div>
+
                         }
+
                     </div>
+
                     }
+
                 </div>
 
 
@@ -141,14 +176,26 @@
                     optionValue="id" formControlName="categoryId">
                 </app-dropdown>
 
+                <!-- Material -->
+                <app-form-field label="Material" placeholder="Material" formControlName="material">
+                </app-form-field>
 
-                <!-- Price -->
+                <!-- Gender -->
 
-                <app-form-field label="MRP" placeholder="Enter MRP" type="number" [min]="0" [step]="0.01"
+                <app-dropdown label="Gender" placeholder="Choose gender" [options]="genderOptions" optionLabel="name"
+                    optionValue="id" formControlName="gender">
+                </app-dropdown>
+
+                <!-- MRP -->
+
+                <app-form-field label="MRP" placeholder="Enter MRP" type="number" [min]="0.01" [step]="0.01"
                     formControlName="originalPrice">
                 </app-form-field>
 
-                <app-form-field label="Selling price" placeholder="Enter selling price" type="number" [min]="0"
+
+                <!-- Selling Price -->
+
+                <app-form-field label="Selling price" placeholder="Enter selling price" type="number" [min]="0.01"
                     [step]="0.01" formControlName="sellingPrice">
                 </app-form-field>
 
@@ -209,24 +256,22 @@
 
         <!-- Actions -->
 
-        <div class="form-actions">
+        <div class="form-actions actions-end">
 
             <a routerLink="/admin/products" class="cancel-link">
-
                 Cancel
-
             </a>
 
 
             <app-button [text]="
-                        isSaving
-                            ? 'Saving...'
-                            : (
-                                isEditMode
-                                    ? 'Save changes'
-                                    : 'Publish product'
-                            )
-                    " icon="save" type="submit" [loading]="isSaving" [disabled]="productForm.invalid">
+            isSaving
+              ? 'Saving...'
+              : (
+                  isEditMode
+                    ? 'Save changes'
+                    : 'Publish product'
+                )
+          " icon="save" type="submit" [loading]="isSaving" [disabled]="productForm.invalid">
             </app-button>
 
         </div>

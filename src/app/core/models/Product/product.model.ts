@@ -19,7 +19,7 @@ export interface Product
     images: ProductImage[];
     categoryId: number;
     categoryName: string;
-    isActive: boolean;
+    isVisible: boolean;
     createdAt: string;
 }
 
@@ -33,7 +33,7 @@ export interface ProductRequest
     material?: string;
     gender: number;
     categoryId: number;
-    isActive: boolean;
+    isVisible: boolean;
     images?: File[];
 }
 

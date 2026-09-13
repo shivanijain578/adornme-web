@@ -185,7 +185,7 @@ export class AdminProductList implements OnInit
     },
 
     {
-      key: 'isActive',
+      key: 'isVisible',
       header: 'Visible',
       type: 'boolean'
     }

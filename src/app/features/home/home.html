@@ -1,25 +1,6 @@
 <!-- AdornMe Home - luxury storefront -->
 <main class="home-page">
 
-    <!-- Branded page loader: no plain "Loading..." text -->
-    @if (showPreloader) {
-    <div class="brand-preloader" [class.preloader-leaving]="pageReady" aria-live="polite" aria-label="Opening AdornMe">
-        <div class="preloader-orbit orbit-one"></div>
-        <div class="preloader-orbit orbit-two"></div>
-        <div class="preloader-sparkle sparkle-one">✦</div>
-        <div class="preloader-sparkle sparkle-two">✧</div>
-        <div class="preloader-brand">
-            <span class="brand-word">
-                @for (letter of logoLetters; track $index) {
-                <span class="logo-letter" [style.--letter-index]="$index">{{ letter }}</span>
-                }
-            </span>
-            <span class="brand-subtitle">JEWELLERY · MADE TO SHINE</span>
-        </div>
-        <div class="preloader-line"><span></span></div>
-    </div>
-    }
-
     <!-- Hero: appears ONLY when an admin-created banner exists -->
     @if (banners.length > 0) {
     <section class="hero" aria-label="Featured offers">

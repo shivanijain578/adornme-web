@@ -25,8 +25,11 @@ import
   MatInputModule
 } from '@angular/material/input';
 
+
 @Component({
+
   selector: 'app-form-field',
+
   standalone: true,
 
   imports: [
@@ -36,17 +39,27 @@ import
   ],
 
   templateUrl: './app-form-field.html',
+
   styleUrl: './app-form-field.scss'
+
 })
+
+
 export class AppFormField
   implements ControlValueAccessor
 {
 
-  @Input() label = '';
 
-  @Input() placeholder = '';
+  @Input()
+  label = '';
 
-  @Input() type:
+
+  @Input()
+  placeholder = '';
+
+
+  @Input()
+  type:
     | 'text'
     | 'number'
     | 'email'
@@ -55,37 +68,64 @@ export class AppFormField
     | 'password'
     = 'text';
 
-  @Input() hint = '';
-
-  @Input() required = false;
-
-  @Input() min?: number;
-
-  @Input() max?: number;
-
-  @Input() step?: number | string;
 
   @Input()
-  set value(value: string | number)
+  hint = '';
+
+
+  @Input()
+  required = false;
+
+
+  @Input()
+  min?: number;
+
+
+  @Input()
+  max?: number;
+
+
+  @Input()
+  step?: number | string;
+
+
+  @Input()
+  set value(
+    value: string | number
+  )
   {
+
     this._value = value;
+
   }
+
 
   get value(): string | number
   {
+
     return this._value;
+
   }
 
-  @Output()
-  valueChange = new EventEmitter<string | number>();
 
-  private _value: string | number = '';
+  @Output()
+  valueChange =
+    new EventEmitter<
+      string | number
+    >();
+
+
+  private _value:
+    string | number = '';
+
 
   disabled = false;
+
 
   private onChange:
     (value: string | number) => void =
     () => { };
+
 
   private onTouched:
     () => void =
@@ -93,15 +133,22 @@ export class AppFormField
 
 
   constructor(
+
     @Optional()
     @Self()
     public ngControl: NgControl
+
   )
   {
+
     if (this.ngControl)
     {
-      this.ngControl.valueAccessor = this;
+
+      this.ngControl.valueAccessor =
+        this;
+
     }
+
   }
 
 
@@ -112,6 +159,7 @@ export class AppFormField
 
     this.value =
       value ?? '';
+
   }
 
 
@@ -121,6 +169,7 @@ export class AppFormField
   {
 
     this.onChange = fn;
+
   }
 
 
@@ -130,6 +179,7 @@ export class AppFormField
   {
 
     this.onTouched = fn;
+
   }
 
 
@@ -138,7 +188,9 @@ export class AppFormField
   ): void
   {
 
-    this.disabled = isDisabled;
+    this.disabled =
+      isDisabled;
+
   }
 
 
@@ -150,9 +202,11 @@ export class AppFormField
     const input =
       event.target as HTMLInputElement;
 
+
     let value:
       string | number =
       input.value;
+
 
     if (this.type === 'number')
     {
@@ -161,12 +215,16 @@ export class AppFormField
         input.value === ''
           ? ''
           : Number(input.value);
+
     }
+
 
     this.value = value;
 
     this.onChange(value);
+
     this.valueChange.emit(value);
+
   }
 
 
@@ -174,6 +232,7 @@ export class AppFormField
   {
 
     this.onTouched();
+
   }
 
 
@@ -181,12 +240,16 @@ export class AppFormField
   {
 
     return !!(
+
       this.ngControl?.invalid &&
+
       (
         this.ngControl.touched ||
         this.ngControl.dirty
       )
+
     );
+
   }
 
 
@@ -196,36 +259,140 @@ export class AppFormField
     const errors =
       this.ngControl?.errors;
 
+
     if (!errors)
     {
+
       return '';
+
     }
 
+
+    /*
+     * Required
+     */
     if (errors['required'])
     {
-      return `${this.label} is required.`;
+
+      return (
+        `${this.label} is required.`
+      );
+
     }
 
-    if (errors['maxlength'])
-    {
-      return `${this.label} is too long.`;
-    }
 
-    if (errors['min'])
-    {
-      return `${this.label} must be at least ${errors['min'].min}.`;
-    }
-
-    if (errors['max'])
-    {
-      return `${this.label} must be at most ${errors['max'].max}.`;
-    }
-
+    /*
+     * Email
+     */
     if (errors['email'])
     {
-      return 'Please enter a valid email address.';
+
+      return (
+        'Please enter a valid email address.'
+      );
+
     }
 
-    return 'Please enter a valid value.';
+
+    /*
+     * Minimum length
+     */
+    if (errors['minlength'])
+    {
+
+      return (
+        `${this.label} must be at least ` +
+        `${errors['minlength'].requiredLength} ` +
+        `characters.`
+      );
+
+    }
+
+
+    /*
+     * Maximum length
+     */
+    if (errors['maxlength'])
+    {
+
+      return (
+        `${this.label} must be at most ` +
+        `${errors['maxlength'].requiredLength} ` +
+        `characters.`
+      );
+
+    }
+
+
+    /*
+     * Minimum number
+     */
+    if (errors['min'])
+    {
+
+      return (
+        `${this.label} must be at least ` +
+        `${errors['min'].min}.`
+      );
+
+    }
+
+
+    /*
+     * Maximum number
+     */
+    if (errors['max'])
+    {
+
+      return (
+        `${this.label} must be at most ` +
+        `${errors['max'].max}.`
+      );
+
+    }
+
+
+    /*
+     * Product pricing
+     */
+    if (errors['priceExceedsMrp'])
+    {
+
+      return (
+        'Selling price cannot be greater than MRP.'
+      );
+
+    }
+
+
+    /*
+     * Pattern
+     */
+    if (errors['pattern'])
+    {
+
+      return (
+        `${this.label} has an invalid format.`
+      );
+
+    }
+
+
+    /*
+     * Server validation
+     */
+    if (errors['serverError'])
+    {
+
+      return errors['serverError'];
+
+    }
+
+
+    return (
+      'Please enter a valid value.'
+    );
+
   }
+
 }

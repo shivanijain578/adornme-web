@@ -1,39 +1,223 @@
-<main class="category-page">
+<main class="page category-page">
+
     <header class="page-header">
-        <div>
-            <p class="eyebrow">Admin studio</p>
-            <h1>Categories</h1>
-            <p>Organise the collection into clear, discoverable edits.</p>
+        <div class="page-header-content">
+            <p class="eyebrow">
+                Admin studio
+            </p>
+
+            <h1 class="page-title">
+                Categories
+            </h1>
+
+            <p class="page-description">
+                Organise the collection into clear, discoverable edits.
+            </p>
         </div>
-        <a class="primary-link" routerLink="/admin/categories/new">Add category <span aria-hidden="true">+</span></a>
+
+        <a class="btn btn-primary" routerLink="/admin/categories/new">
+
+            Add category
+
+            <span aria-hidden="true">
+                +
+            </span>
+
+        </a>
     </header>
 
+
     @if (errorMessage) {
-    <div class="error" role="alert">{{ errorMessage }}</div>
+
+    <div class="error" role="alert">
+
+        {{ errorMessage }}
+
+    </div>
+
     }
 
+
     @if (isLoading) {
-    <p class="status">Loading categories...</p>
-    } @else if (categories.length === 0) {
-    <section class="empty-state">
-        <h2>No categories yet.</h2>
-        <p>Create the first category for the collection.</p>
-        <a class="primary-link" routerLink="/admin/categories/new">Create category</a>
-    </section>
-    } @else {
-    <section class="category-grid" aria-label="Product categories">
-        @for (category of categories; track category.id; let index = $index) {
-        <article class="category-card">
-            <span class="category-number">0{{ index + 1 }}</span>
-            <h2>{{ category.name }}</h2>
-            <p>{{ category.description || 'No description added.' }}</p>
-            <div class="card-actions">
-                <a [routerLink]="['/admin/categories', category.id, 'edit']">Edit</a>
-                <app-button text="Delete" appearance="text" (clicked)="deleteCategory(category)">
-                </app-button>
-            </div>
-        </article>
-        }
-    </section>
+
+    <p class="status">
+        Loading categories...
+    </p>
+
     }
+
+    @else if (categories.length === 0) {
+
+    <section class="empty-state">
+
+        <h2>
+            No categories yet.
+        </h2>
+
+        <p>
+            Create the first category for the collection.
+        </p>
+
+        <a class="btn btn-primary" routerLink="/admin/categories/new">
+
+            Create category
+
+        </a>
+
+    </section>
+
+    }
+
+    @else {
+
+    <section class="table-container" aria-label="Product categories">
+
+        <table class="data-table category-table">
+
+            <thead>
+
+                <tr>
+
+                    <th scope="col">
+                        Image
+                    </th>
+
+                    <th scope="col">
+                        Category
+                    </th>
+
+                    <th scope="col">
+                        Description
+                    </th>
+
+                    <th scope="col">
+                        Visibility
+                    </th>
+
+                    <th scope="col">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                @for (
+                category of categories;
+                track category.id;
+                let index = $index
+                ) {
+
+                <tr>
+
+                    <!-- Image -->
+
+                    <td class="image-cell">
+
+                        @if (category.imageUrl) {
+
+                        <img class="category-image" [src]="category.imageUrl | assetUrl" [alt]="category.name"
+                            width="72" height="72">
+
+                        }
+
+                        @else {
+
+                        <div class="category-image-placeholder" aria-label="No category image">
+
+                            <span>
+                                No image
+                            </span>
+
+                        </div>
+
+                        }
+
+                    </td>
+
+
+                    <!-- Category -->
+
+                    <td class="category-name-cell">
+
+                        <span class="category-number">
+                            {{ (index + 1).toString().padStart(2, '0') }}
+                        </span>
+
+                        <strong>
+                            {{ category.name }}
+                        </strong>
+
+                    </td>
+
+
+                    <!-- Description -->
+
+                    <td class="description-cell">
+
+                        {{ category.description || 'No description added.' }}
+
+                    </td>
+
+
+                    <!-- Visibility -->
+
+                    <td>
+
+                        @if (category.isVisible) {
+
+                        <span class="status-badge status-success">
+                            <span class="status-dot"></span>
+                            Visible
+                        </span>
+
+                        }
+
+                        @else {
+
+                        <span class="status-badge status-neutral">
+                            <span class="status-dot"></span>
+                            Hidden
+                        </span>
+
+                        }
+
+                    </td>
+
+
+                    <!-- Actions -->
+
+                    <td class="actions-cell">
+
+                        <a class="edit-link" [routerLink]="[
+                                        '/admin/categories',
+                                        category.id,
+                                        'edit'
+                                    ]">
+
+                            Edit
+
+                        </a>
+
+                        <app-button text="Delete" appearance="text" (clicked)="deleteCategory(category)">
+
+                        </app-button>
+
+                    </td>
+
+                </tr>
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    }
+
 </main>

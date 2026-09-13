@@ -160,7 +160,7 @@ export class ProductService
         formData.append('Material', request.material ?? '');
         formData.append('Gender', request.gender.toString());
         formData.append('CategoryId', request.categoryId.toString());
-        formData.append('IsActive', request.isActive.toString());
+        formData.append('IsActive', request.isVisible.toString());
         request.images?.forEach(image => formData.append('Images', image, image.name));
         return formData;
     }

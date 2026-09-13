@@ -1,8 +1,7 @@
 import
 {
-    ChangeDetectorRef,
-    Component,
-    inject,
+    ChangeDetectorRef, Component, inject,
+    OnDestroy,
     OnInit
 } from '@angular/core';
 
@@ -20,14 +19,20 @@ import
     RouterLink
 } from '@angular/router';
 
-import { MatIconModule }
-    from '@angular/material/icon';
+import
+{
+    MatIconModule
+} from '@angular/material/icon';
 
-import { MatProgressSpinnerModule }
-    from '@angular/material/progress-spinner';
+import
+{
+    MatProgressSpinnerModule
+} from '@angular/material/progress-spinner';
 
-import { Category }
-    from '../../../core/models/Category/category.model';
+import
+{
+    Category
+} from '../../../core/models/Category/category.model';
 
 import
 {
@@ -44,15 +49,40 @@ import
 {
     ProductService
 } from '../../../core/services/Product/product.service';
-import { AppButton } from '../../../shared/components/Basic_Material_wrappers/app-button/app-button';
-import { AppCheckbox } from '../../../shared/components/Basic_Material_wrappers/app-checkbox/app-checkbox';
-import { AppDropdown } from '../../../shared/components/Basic_Material_wrappers/app-dropdown/app-dropdown';
-import { AppFormField } from '../../../shared/components/Basic_Material_wrappers/app-form-field/app-form-field';
-import { AppTextarea } from '../../../shared/components/Basic_Material_wrappers/app-textarea/app-textarea';
-import { AssetUrlPipe } from '../../../shared/pipes/asset-url.pipe';
+import
+{
+    AppButton
+} from '../../../shared/components/Basic_Material_wrappers/app-button/app-button';
+
+import
+{
+    AppCheckbox
+} from '../../../shared/components/Basic_Material_wrappers/app-checkbox/app-checkbox';
+
+import
+{
+    AppDropdown
+} from '../../../shared/components/Basic_Material_wrappers/app-dropdown/app-dropdown';
+
+import
+{
+    AppFormField
+} from '../../../shared/components/Basic_Material_wrappers/app-form-field/app-form-field';
+
+import
+{
+    AppTextarea
+} from '../../../shared/components/Basic_Material_wrappers/app-textarea/app-textarea';
+
+import
+{
+    AssetUrlPipe
+} from '../../../shared/pipes/asset-url.pipe';
+import { NotificationService } from '../../../core/services/Notification/notification';
 
 
 @Component({
+
     selector: 'app-product-form',
 
     imports: [
@@ -67,70 +97,40 @@ import { AssetUrlPipe } from '../../../shared/pipes/asset-url.pipe';
         AppDropdown,
         AppCheckbox,
         AppButton,
+
         AssetUrlPipe
     ],
 
     templateUrl: './product-form.html',
 
-    styleUrl: './product-form.scss',
+    styleUrl: './product-form.scss'
+
 })
-export class ProductForm implements OnInit
+export class ProductForm implements OnInit, OnDestroy
 {
-
-    private readonly fb =
-        inject(FormBuilder);
-
-    private readonly route =
-        inject(ActivatedRoute);
-
-    private readonly router =
-        inject(Router);
-
-    private readonly productService =
-        inject(ProductService);
-
-    private readonly categoryService =
-        inject(CategoryService);
-
-    private readonly cdr =
-        inject(ChangeDetectorRef);
-
-
-    // =====================================================
-    // PRODUCT
-    // =====================================================
-
-    readonly productId =
-        Number(
-            this.route.snapshot.paramMap.get('id')
-        ) || null;
-
-    readonly isEditMode =
-        this.productId !== null;
-
-
-    // =====================================================
-    // STATE
-    // =====================================================
-
+    private readonly fb = inject(FormBuilder);
+    private readonly route = inject(ActivatedRoute);
+    private readonly router = inject(Router);
+    private readonly productService = inject(ProductService);
+    private readonly categoryService = inject(CategoryService);
+    private readonly notificationService = inject(NotificationService);
+    private readonly cdr = inject(ChangeDetectorRef);
+    readonly productId = Number(this.route.snapshot.paramMap.get('id')) || null;
+    readonly isEditMode = this.productId !== null;
     categories: Category[] = [];
-
     isLoading = false;
-
     isSaving = false;
-
     errorMessage = '';
+    imageErrorMessage = '';
     selectedImages: File[] = [];
     selectedImageUrls: string[] = [];
     existingImageUrls: string[] = [];
-
-
-    // =====================================================
-    // FORM
-    // =====================================================
-
+    genderOptions = [
+        { id: 1, name: 'Women' },
+        { id: 2, name: 'Men' },
+        { id: 3, name: 'Unisex' }
+    ];
     productForm = this.fb.nonNullable.group({
-
         name: [
             '',
             [
@@ -138,7 +138,6 @@ export class ProductForm implements OnInit
                 Validators.maxLength(120)
             ]
         ],
-
         description: [
             '',
             [
@@ -146,20 +145,20 @@ export class ProductForm implements OnInit
                 Validators.maxLength(2000)
             ]
         ],
-
         originalPrice: [
             0,
             [
                 Validators.required,
-                Validators.min(0)
+                Validators.min(0.01)
             ]
         ],
-
         sellingPrice: [
             0,
-            [Validators.required, Validators.min(0)]
+            [
+                Validators.required,
+                Validators.min(0.01)
+            ]
         ],
-
         stockQuantity: [
             0,
             [
@@ -167,11 +166,8 @@ export class ProductForm implements OnInit
                 Validators.min(0)
             ]
         ],
-
         material: [''],
-
         gender: [0],
-
         categoryId: [
             0,
             [
@@ -179,22 +175,15 @@ export class ProductForm implements OnInit
                 Validators.min(1)
             ]
         ],
-
-        isActive: [
-            true
-        ]
-
+        isVisible: [true]
     });
 
-
-    // =====================================================
-    // INIT
-    // =====================================================
 
     ngOnInit(): void
     {
 
         this.loadCategories();
+
 
         if (this.productId !== null)
         {
@@ -204,25 +193,39 @@ export class ProductForm implements OnInit
             );
 
         }
+
     }
 
-
-    // =====================================================
-    // SUBMIT
-    // =====================================================
 
     submit(): void
     {
 
+        this.productForm.markAllAsTouched();
+
+
+        const pricingValid =
+            this.validatePricing();
+
+
+        const imagesValid =
+            this.validateImages();
+
+
         if (
+
             this.productForm.invalid ||
+
+            !pricingValid ||
+
+            !imagesValid ||
+
             this.isSaving
+
         )
         {
 
-            this.productForm.markAllAsTouched();
-
             return;
+
         }
 
 
@@ -231,9 +234,14 @@ export class ProductForm implements OnInit
         this.errorMessage = '';
 
 
-        const request: ProductRequest = {
+        const request:
+            ProductRequest = {
+
             ...this.productForm.getRawValue(),
-            images: this.selectedImages
+
+            images:
+                this.selectedImages
+
         };
 
 
@@ -257,9 +265,19 @@ export class ProductForm implements OnInit
 
                 this.isSaving = false;
 
-                /*
-                 * Navigate back to ADMIN products.
-                 */
+
+                this.notificationService
+                    .showSuccess(
+
+                        this.isEditMode
+
+                            ? 'Product updated successfully.'
+
+                            : 'Product added successfully.'
+
+                    );
+
+
                 this.router.navigate([
                     '/admin/products'
                 ]);
@@ -275,55 +293,285 @@ export class ProductForm implements OnInit
                     error
                 );
 
-                this.errorMessage =
-                    error?.error?.message ??
-                    'Unable to save product.';
 
                 this.isSaving = false;
 
                 this.cdr.detectChanges();
+
             }
 
         });
+
     }
 
-    onImagesSelected(event: Event): void
+
+    private validatePricing(): boolean
     {
-        const input = event.target as HTMLInputElement;
-        const files = Array.from(input.files ?? []);
+
+        const originalPrice =
+            Number(
+                this.productForm.controls
+                    .originalPrice.value
+            );
+
+
+        const sellingPrice =
+            Number(
+                this.productForm.controls
+                    .sellingPrice.value
+            );
+
+
+        const sellingPriceControl =
+            this.productForm.controls
+                .sellingPrice;
+
+
+        if (
+
+            originalPrice > 0 &&
+
+            sellingPrice > originalPrice
+
+        )
+        {
+
+            sellingPriceControl.setErrors({
+
+                ...sellingPriceControl.errors,
+
+                priceExceedsMrp: true
+
+            });
+
+
+            return false;
+
+        }
+
+
+        const errors =
+            sellingPriceControl.errors;
+
+
+        if (
+            errors?.['priceExceedsMrp']
+        )
+        {
+
+            const {
+                priceExceedsMrp,
+                ...remainingErrors
+            } = errors;
+
+
+            sellingPriceControl.setErrors(
+
+                Object.keys(
+                    remainingErrors
+                ).length > 0
+
+                    ? remainingErrors
+
+                    : null
+
+            );
+
+        }
+
+
+        return true;
+
+    }
+
+
+    private validateImages(): boolean
+    {
+
+        /*
+         * New product requires at least
+         * one image.
+         */
+        if (
+
+            this.productId === null &&
+
+            this.selectedImages.length === 0
+
+        )
+        {
+
+            this.imageErrorMessage =
+                'At least 1 product image is required.';
+
+
+            return false;
+
+        }
+
+
+        /*
+         * Maximum three selected images.
+         */
+        if (
+            this.selectedImages.length > 3
+        )
+        {
+
+            this.imageErrorMessage =
+                'Maximum 3 product images are allowed.';
+
+
+            return false;
+
+        }
+
+
+        this.imageErrorMessage = '';
+
+        return true;
+
+    }
+
+
+    onImagesSelected(
+        event: Event
+    ): void
+    {
+
+        const input =
+            event.target as HTMLInputElement;
+
+
+        const files =
+            Array.from(
+                input.files ?? []
+            );
+
+
+        this.imageErrorMessage = '';
+
+
+        if (files.length === 0)
+        {
+
+            return;
+
+        }
+
+
+        /*
+         * Maximum 3 images.
+         */
         if (files.length > 3)
         {
-            this.errorMessage = 'Choose a maximum of 3 product images.';
+
+            this.imageErrorMessage =
+                'Maximum 3 product images are allowed.';
+
+
             input.value = '';
+
             return;
+
         }
 
-        const invalidFile = files.find(file => !file.type.startsWith('image/') || file.size > 5 * 1024 * 1024);
+
+        /*
+         * Validate image type and size.
+         */
+        const invalidFile =
+            files.find(
+
+                file =>
+
+                    !file.type.startsWith(
+                        'image/'
+                    ) ||
+
+                    file.size >
+                    5 * 1024 * 1024
+
+            );
+
+
         if (invalidFile)
         {
-            this.errorMessage = 'Images must be valid image files smaller than 5 MB.';
+
+            this.imageErrorMessage =
+                'Each image must be a valid image file up to 5 MB.';
+
+
             input.value = '';
+
             return;
+
         }
 
-        this.errorMessage = '';
-        this.selectedImages = files;
-        this.selectedImageUrls.forEach(url => URL.revokeObjectURL(url));
-        this.selectedImageUrls = files.map(file => URL.createObjectURL(file));
+
+        this.selectedImageUrls
+            .forEach(
+                url =>
+                    URL.revokeObjectURL(url)
+            );
+
+
+        this.selectedImages =
+            files;
+
+
+        this.selectedImageUrls =
+            files.map(
+
+                file =>
+                    URL.createObjectURL(file)
+
+            );
+
     }
 
-    removeSelectedImage(index: number): void
+
+    removeSelectedImage(
+        index: number
+    ): void
     {
-        const previewUrl = this.selectedImageUrls[index];
-        if (previewUrl) URL.revokeObjectURL(previewUrl);
-        this.selectedImages = this.selectedImages.filter((_, currentIndex) => currentIndex !== index);
-        this.selectedImageUrls = this.selectedImageUrls.filter((_, currentIndex) => currentIndex !== index);
+
+        const previewUrl =
+            this.selectedImageUrls[index];
+
+
+        if (previewUrl)
+        {
+
+            URL.revokeObjectURL(
+                previewUrl
+            );
+
+        }
+
+
+        this.selectedImages =
+            this.selectedImages.filter(
+
+                (_, currentIndex) =>
+                    currentIndex !== index
+
+            );
+
+
+        this.selectedImageUrls =
+            this.selectedImageUrls.filter(
+
+                (_, currentIndex) =>
+                    currentIndex !== index
+
+            );
+
+
+        this.imageErrorMessage = '';
+
     }
 
-
-    // =====================================================
-    // LOAD CATEGORIES
-    // =====================================================
 
     private loadCategories(): void
     {
@@ -339,6 +587,7 @@ export class ProductForm implements OnInit
                         categories;
 
                     this.cdr.detectChanges();
+
                 },
 
 
@@ -350,24 +599,23 @@ export class ProductForm implements OnInit
                         error
                     );
 
-                    this.errorMessage =
-                        'Unable to load categories.';
 
                     this.cdr.detectChanges();
+
                 }
 
             });
+
     }
 
 
-    // =====================================================
-    // LOAD PRODUCT
-    // =====================================================
-
-    private loadProduct(id: number): void
+    private loadProduct(
+        id: number
+    ): void
     {
 
         this.isLoading = true;
+
 
         this.productService
             .getProductById(id)
@@ -379,11 +627,19 @@ export class ProductForm implements OnInit
                     this.productForm.patchValue(
                         this.toFormValue(product)
                     );
-                    this.existingImageUrls = product.images.map(image => image.imageUrl);
+
+
+                    this.existingImageUrls =
+                        product.images.map(
+                            image =>
+                                image.imageUrl
+                        );
+
 
                     this.isLoading = false;
 
                     this.cdr.detectChanges();
+
                 },
 
 
@@ -395,22 +651,17 @@ export class ProductForm implements OnInit
                         error
                     );
 
-                    this.errorMessage =
-                        error?.error?.message ??
-                        'Unable to load product.';
 
                     this.isLoading = false;
 
                     this.cdr.detectChanges();
+
                 }
 
             });
+
     }
 
-
-    // =====================================================
-    // PRODUCT → FORM
-    // =====================================================
 
     private toFormValue(
         product: Product
@@ -422,30 +673,52 @@ export class ProductForm implements OnInit
             name:
                 product.name,
 
+
             description:
                 product.description,
+
 
             originalPrice:
                 product.originalPrice,
 
+
             sellingPrice:
                 product.sellingPrice,
+
 
             stockQuantity:
                 product.stockQuantity,
 
+
             material:
                 product.material ?? '',
+
 
             gender:
                 product.gender,
 
+
             categoryId:
                 product.categoryId,
 
-            isActive:
-                product.isActive
+
+            isVisible:
+                product.isVisible
 
         };
+
     }
+
+
+    ngOnDestroy(): void
+    {
+
+        this.selectedImageUrls
+            .forEach(
+                url =>
+                    URL.revokeObjectURL(url)
+            );
+
+    }
+
 }

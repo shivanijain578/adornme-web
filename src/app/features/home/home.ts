@@ -21,13 +21,8 @@ export class Home implements OnInit, OnDestroy
 
   activeBannerIndex = 0;
   isLoading = true;
-  showPreloader = true;
-  pageReady = false;
   errorMessage = '';
 
-  readonly logoLetters = Array.from('adornme');
-
-  private hideLoaderTimer?: ReturnType<typeof setTimeout>;
   private bannerTimer?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void
@@ -40,15 +35,6 @@ export class Home implements OnInit, OnDestroy
         this.banners = response.banners ?? [];
         this.activeBannerIndex = 0;
         this.isLoading = false;
-        this.pageReady = true;
-
-        // Let the final logo animation finish before revealing the store.
-        this.hideLoaderTimer = setTimeout(() =>
-        {
-          this.showPreloader = false;
-          this.cdr.detectChanges();
-        }, 650);
-
         this.startBannerRotation();
         this.cdr.detectChanges();
       },
@@ -56,14 +42,6 @@ export class Home implements OnInit, OnDestroy
       {
         this.errorMessage = 'Unable to load the collection. Please try again.';
         this.isLoading = false;
-        this.pageReady = true;
-
-        this.hideLoaderTimer = setTimeout(() =>
-        {
-          this.showPreloader = false;
-          this.cdr.detectChanges();
-        }, 650);
-
         this.cdr.detectChanges();
       }
     });
@@ -114,7 +92,6 @@ export class Home implements OnInit, OnDestroy
 
   ngOnDestroy(): void
   {
-    if (this.hideLoaderTimer) clearTimeout(this.hideLoaderTimer);
     if (this.bannerTimer) clearInterval(this.bannerTimer);
   }
 }

@@ -9,12 +9,11 @@ import { ProductDetails } from './features/products/product-details/product-deta
 import { Profile } from './features/profile/profile';
 import { ProductForm } from './features/products/product-form/product-form';
 import { CategoryList } from './features/categories/category-list/category-list';
-import { CategoryAdd } from './features/categories/category-add/category-add';
-import { CategoryEdit } from './features/categories/category-edit/category-edit';
 import { Wishlist } from './features/wishlist/wishlist';
 import { Cart } from './features/cart/cart';
 import { Checkout } from './features/checkout/checkout';
 import { Orders } from './features/orders/orders';
+import { CategoryForm } from './features/categories/category-form/category-form';
 
 export const routes: Routes = [
 
@@ -100,13 +99,13 @@ export const routes: Routes = [
 
     {
         path: 'admin/categories/new',
-        component: CategoryAdd,
+        component: CategoryForm,
         canActivate: [adminGuard]
     },
 
     {
         path: 'admin/categories/:id/edit',
-        component: CategoryEdit,
+        component: CategoryForm,
         canActivate: [adminGuard]
     },
 

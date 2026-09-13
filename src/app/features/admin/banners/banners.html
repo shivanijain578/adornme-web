@@ -1,28 +1,58 @@
 <main class="admin-page">
-    <header class="admin-heading">
-        <p class="eyebrow">Admin studio</p>
-        <h1>Banners.</h1>
-        <p>Manage the imagery shown on the customer home page.</p>
-    </header>
-    @if (errorMessage()) { <p class="error" role="alert">{{ errorMessage() }}</p> }
-    <form class="admin-form" [formGroup]="form" (ngSubmit)="save()"><input formControlName="title"
-            placeholder="Banner title" aria-label="Banner title"><input formControlName="linkUrl" placeholder="Link URL"
-            aria-label="Link URL"><input formControlName="displayOrder" type="number" min="0"
-            placeholder="Display order" aria-label="Display order"><input type="file" accept="image/*"
-            (change)="selectImage($event)" [attr.required]="editingId() ? null : true"><label class="checkbox"><input
-                formControlName="isActive" type="checkbox"> Active</label>
-        <div class="form-actions"><app-button [text]="editingId() ? 'Save changes' : 'Create banner'" type="submit"
-                [loading]="isSaving()"></app-button><app-button text="Clear" appearance="text" type="button"
-                (clicked)="reset()"></app-button></div>
-    </form>
-    @if (isLoading()) { <p>Loading...</p> } @else if (banners().length === 0) { <p>No banners found.</p> } @else {
-    <section class="admin-list">@for (banner of banners(); track banner.id) { <article class="banner-row"><img
-                [src]="banner.imageUrl | assetUrl" [alt]="banner.title" width="180" height="90">
-            <div><strong>{{ banner.title }}</strong><span>Order {{ banner.displayOrder }} ·
-                    {{ banner.isActive ? 'Active' : 'Inactive' }}</span></div>
-            <div class="row-actions"><app-button text="Edit" appearance="text"
-                    (clicked)="edit(banner)"></app-button><app-button [text]="banner.isActive ? 'Disable' : 'Activate'"
-                    appearance="text" (clicked)="toggle(banner)"></app-button><app-button text="Delete"
-                    appearance="text" (clicked)="remove(banner)"></app-button></div>
-        </article> }</section> }
+        <header class="admin-heading">
+                <p class="eyebrow">Admin studio</p>
+                <h1>Banners.</h1>
+                <p>Manage the imagery shown on the customer home page.</p>
+        </header>
+        @if (errorMessage()) { <p class="error" role="alert">{{ errorMessage() }}</p> }
+        <form class="admin-form" [formGroup]="form" (ngSubmit)="save()">
+
+                <div class="form-field">
+                        <label for="banner-title">Banner Title</label>
+                        <input id="banner-title" formControlName="title" type="text" placeholder="Enter banner title" />
+                </div>
+
+                <div class="form-field">
+                        <label for="banner-link">Link URL</label>
+                        <input id="banner-link" formControlName="linkUrl" type="text"
+                                placeholder="Enter destination URL" />
+                </div>
+
+                <div class="form-field">
+                        <label for="display-order">Display Order</label>
+                        <input id="display-order" formControlName="displayOrder" type="number" min="0"
+                                placeholder="Enter display order" />
+                </div>
+
+                <div class="form-field">
+                        <label for="banner-image">Banner Image</label>
+                        <input id="banner-image" type="file" accept="image/*" (change)="selectImage($event)"
+                                [attr.required]="editingId() ? null : true" />
+                        <small>Recommended banner image · Maximum 5 MB</small>
+                </div>
+
+                <label class="checkbox">
+                        <input formControlName="isActive" type="checkbox" />
+                        <span>Active</span>
+                </label>
+
+                <div class="form-actions">
+                        <app-button [text]="editingId() ? 'Save changes' : 'Create banner'" type="submit"
+                                [loading]="isSaving()"></app-button>
+
+                        <app-button text="Clear" appearance="text" type="button" (clicked)="reset()"></app-button>
+                </div>
+
+        </form>
+        @if (isLoading()) { <p>Loading...</p> } @else if (banners().length === 0) { <p>No banners found.</p> } @else {
+        <section class="admin-list">@for (banner of banners(); track banner.id) { <article class="banner-row"><img
+                                [src]="banner.imageUrl | assetUrl" [alt]="banner.title" width="180" height="90">
+                        <div><strong>{{ banner.title }}</strong><span>Order {{ banner.displayOrder }} ·
+                                        {{ banner.isActive ? 'Active' : 'Inactive' }}</span></div>
+                        <div class="row-actions"><app-button text="Edit" appearance="text"
+                                        (clicked)="edit(banner)"></app-button><app-button
+                                        [text]="banner.isActive ? 'Disable' : 'Activate'" appearance="text"
+                                        (clicked)="toggle(banner)"></app-button><app-button text="Delete"
+                                        appearance="text" (clicked)="remove(banner)"></app-button></div>
+                </article> }</section> }
 </main>

@@ -87,7 +87,7 @@ export const routes: Routes = [
 
     {
         path: 'admin/orders/:id',
-        loadComponent: () => import('./features/admin/orders/order-detail').then(m => m.AdminOrderDetail),
+        loadComponent: () => import('./features/admin/orders-details/order-detail').then(m => m.AdminOrderDetail),
         canActivate: [adminGuard]
     },
 

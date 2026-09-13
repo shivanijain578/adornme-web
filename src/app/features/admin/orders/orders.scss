@@ -1,61 +1,117 @@
-.admin-page {
-    width: min(1180px, calc(100% - 48px));
-    margin: 0 auto;
-    padding: 60px 0 90px;
+/* =========================================================
+   TABS
+========================================================= */
+
+.tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    padding-bottom: 1px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
 }
 
-.admin-heading {
-    margin-bottom: 32px;
+.tabs::-webkit-scrollbar {
+    display: none;
 }
 
-.admin-heading h1 {
-    font-size: clamp(3rem, 7vw, 6rem);
-    line-height: .9;
-    margin-bottom: 12px;
-}
-
-.admin-page>select {
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid var(--line);
-    background: var(--white);
-}
-
-.order-list {
-    display: grid;
-    gap: 8px;
-}
-
-.order-row {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr .8fr .7fr;
-    gap: 18px;
-    align-items: center;
-    padding: 18px;
-    background: var(--white);
-    border: 1px solid var(--line);
-}
-
-.order-row div {
-    display: grid;
-    gap: 5px;
-}
-
-.order-row span {
+.tab {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 0 var(--space-4);
     color: var(--ink-soft);
-    font-size: .8rem;
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        color var(--transition-fast),
+        border-color var(--transition-fast);
 }
 
-.order-row:hover {
-    border-color: var(--brand);
+.tab:hover {
+    color: var(--ink);
 }
 
-@media (max-width: 700px) {
-    .admin-page {
-        width: min(100% - 32px, 1180px);
-    }
+.tab.active {
+    color: var(--brand-deep);
+    border-bottom-color: var(--brand);
+}
 
-    .order-row {
-        grid-template-columns: 1fr 1fr;
-    }
+
+/* =========================================================
+   TABLE ROW LINK
+========================================================= */
+
+.table-row-link {
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.table-row-link:hover {
+    background: var(--paper);
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-pending {
+    color: var(--warning);
+    background: var(--warning-bg);
+}
+
+.status-confirmed {
+    color: var(--brand-deep);
+    background: var(--paper-deep);
+}
+
+.status-shipped {
+    color: #5c7185;
+    background: #eef3f7;
+}
+
+.status-delivered {
+    color: var(--success);
+    background: var(--success-bg);
+}
+
+.status-cancelled,
+.status-returned {
+    color: var(--error);
+    background: var(--error-bg);
+}
+
+.status-cell {
+    min-width: 150px;
+}
+
+.order-status-link {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 8px 10px;
+    margin: -8px -10px;
+    border-radius: var(--radius-sm);
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.order-status-link:hover {
+    background: var(--paper-deep);
+}
+
+.order-status-link:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
 }

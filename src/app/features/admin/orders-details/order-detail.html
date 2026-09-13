@@ -1,0 +1,142 @@
+<main class="page page-narrow">
+
+    @if (isLoading()) {
+
+    <div class="loading-state">
+        <p>Loading order...</p>
+    </div>
+
+    } @else if (errorMessage()) {
+
+    <div class="error-state" role="alert">
+        <h2>Unable to load order</h2>
+        <p>{{ errorMessage() }}</p>
+    </div>
+
+    } @else if (order(); as currentOrder) {
+
+    <a class="back-link" routerLink="/admin/orders">
+        ← Back to orders
+    </a>
+
+    <header class="page-header">
+        <div class="page-header-content">
+
+            <p class="eyebrow">
+                Order #{{ currentOrder.id }}
+            </p>
+
+            <h1 class="page-title">
+                {{ currentOrder.status }}
+            </h1>
+
+            <p class="page-description">
+                {{ currentOrder.customerEmail || 'Customer unavailable' }}
+                ·
+                {{ currentOrder.createdAt | date:'mediumDate' }}
+            </p>
+
+        </div>
+    </header>
+
+    <section class="grid grid-2">
+
+        <article class="card">
+
+            <div class="card-header">
+                <h2>Items</h2>
+            </div>
+
+            <div class="card-body">
+
+                @for (item of currentOrder.items; track item.productId) {
+
+                <div class="detail-row">
+                    <span>
+                        {{ item.productName }} × {{ item.quantity }}
+                    </span>
+
+                    <strong>
+                        ₹{{ item.unitPrice * item.quantity }}
+                    </strong>
+                </div>
+
+                }
+
+                <div class="detail-row detail-total">
+                    <span>Total</span>
+                    <strong>₹{{ currentOrder.totalAmount }}</strong>
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <aside class="card">
+
+            <div class="card-header">
+                <h2>Delivery</h2>
+            </div>
+
+            <div class="card-body">
+
+                <p>{{ currentOrder.address }}</p>
+
+                <div class="divider"></div>
+
+                <h2>Payment</h2>
+
+                <p>
+                    {{ currentOrder.payment?.method || 'Not available' }}
+                </p>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+
+    <section class="card status-panel">
+
+        <div class="card-header">
+            <div>
+                <p class="eyebrow">Order management</p>
+                <h2>Update order status</h2>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+            @if ((transitions[currentOrder.status] || []).length > 0) {
+
+            <div class="actions">
+
+                @for (
+                transition of transitions[currentOrder.status] || [];
+                track transition.value
+                ) {
+
+                <app-button [text]="transition.label" appearance="stroked" [loading]="isSaving()"
+                    [disabled]="isSaving()" (clicked)="update(transition.value)"></app-button>
+
+                }
+
+            </div>
+
+            } @else {
+
+            <p class="text-muted">
+                No further status changes are available for this order.
+            </p>
+
+            }
+
+        </div>
+
+    </section>
+
+    }
+
+</main>

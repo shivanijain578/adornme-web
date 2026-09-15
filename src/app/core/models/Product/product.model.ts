@@ -65,10 +65,18 @@ export interface ProductDetail
     categoryName: string;
 }
 
+export interface HomeCategory
+{
+    id: number;
+    name: string;
+    description?: string;
+    imageUrl?: string;
+}
+
 export interface HomeResponse
 {
     banners: HomeBanner[];
-    categories: { id: number; name: string; description?: string }[];
+    categories: HomeCategory[];
     bestSellers: ProductSummary[];
     newArrivals: ProductSummary[];
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HomeBanner, HomeCategory, ProductSummary } from '../../core/models/Product/product.model';
 import { ProductService } from '../../core/services/Product/product.service';
 import { AssetUrlPipe } from '../../shared/pipes/asset-url.pipe';
@@ -13,11 +13,13 @@ import { AssetUrlPipe } from '../../shared/pipes/asset-url.pipe';
 export class Home implements OnInit, OnDestroy
 {
   private readonly productService = inject(ProductService);
+  private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
 
   categories: HomeCategory[] = [];
   bestsellers: ProductSummary[] = [];
   banners: HomeBanner[] = [];
+  searchTerm = '';
 
   activeBannerIndex = 0;
   isLoading = true;
@@ -59,11 +61,18 @@ export class Home implements OnInit, OnDestroy
     });
   }
 
+  searchProducts(): void
+  {
+    const search = this.searchTerm.trim();
+    this.router.navigate(['/products'], {
+      queryParams: search ? { search } : {}
+    });
+  }
+
   getProductImageIndex(product: ProductSummary): number
   {
     const count = product.images?.length ?? 0;
     if (count === 0) return 0;
-
     const index = this.productImageIndexes.get(product.id) ?? 0;
     return Math.min(index, count - 1);
   }
@@ -72,10 +81,8 @@ export class Home implements OnInit, OnDestroy
   {
     event.preventDefault();
     event.stopPropagation();
-
     const count = product.images?.length ?? 0;
     if (count <= 1) return;
-
     const current = this.getProductImageIndex(product);
     this.productImageIndexes.set(product.id, (current - 1 + count) % count);
     this.restartProductImageRotation(product);
@@ -86,10 +93,8 @@ export class Home implements OnInit, OnDestroy
   {
     event.preventDefault();
     event.stopPropagation();
-
     const count = product.images?.length ?? 0;
     if (count <= 1) return;
-
     const current = this.getProductImageIndex(product);
     this.productImageIndexes.set(product.id, (current + 1) % count);
     this.restartProductImageRotation(product);
@@ -100,10 +105,8 @@ export class Home implements OnInit, OnDestroy
   {
     event.preventDefault();
     event.stopPropagation();
-
     const count = product.images?.length ?? 0;
     if (index < 0 || index >= count) return;
-
     this.productImageIndexes.set(product.id, index);
     this.restartProductImageRotation(product);
     this.cdr.detectChanges();
@@ -113,8 +116,7 @@ export class Home implements OnInit, OnDestroy
   {
     if (this.banners.length > 1)
     {
-      this.activeBannerIndex =
-        (this.activeBannerIndex - 1 + this.banners.length) % this.banners.length;
+      this.activeBannerIndex = (this.activeBannerIndex - 1 + this.banners.length) % this.banners.length;
       this.restartBannerRotation();
     }
   }
@@ -131,7 +133,6 @@ export class Home implements OnInit, OnDestroy
   selectBanner(index: number): void
   {
     if (index < 0 || index >= this.banners.length) return;
-
     this.activeBannerIndex = index;
     this.restartBannerRotation();
   }
@@ -140,7 +141,6 @@ export class Home implements OnInit, OnDestroy
   {
     const count = product.images?.length ?? 0;
     if (count <= 1) return;
-
     const delay = 3000 + (product.id % 4) * 450;
     const timer = setInterval(() =>
     {
@@ -148,7 +148,6 @@ export class Home implements OnInit, OnDestroy
       this.productImageIndexes.set(product.id, (current + 1) % count);
       this.cdr.detectChanges();
     }, delay);
-
     this.productImageTimers.set(product.id, timer);
   }
 
@@ -156,7 +155,6 @@ export class Home implements OnInit, OnDestroy
   {
     const existing = this.productImageTimers.get(product.id);
     if (existing) clearInterval(existing);
-
     this.startProductImageRotation(product);
   }
 
@@ -170,7 +168,6 @@ export class Home implements OnInit, OnDestroy
   {
     if (this.bannerTimer) clearInterval(this.bannerTimer);
     if (this.banners.length <= 1) return;
-
     this.bannerTimer = setInterval(() =>
     {
       this.activeBannerIndex = (this.activeBannerIndex + 1) % this.banners.length;

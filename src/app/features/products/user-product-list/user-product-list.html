@@ -2,18 +2,16 @@
     <header class="user-products-heading">
         <p class="eyebrow">The AdornMe collection</p>
         <h1>Find your finishing touch.</h1>
-        <p>Thoughtful jewellery and accessories designed to stay with you.</p>
+        <p>Browse the collection, search by name, filter by category, and sort by what you want to see first.</p>
     </header>
 
     <section class="user-filter-panel" aria-label="Shop filters">
-        <app-search-box placeholder="Search jewellery..." [value]="search"
-            (valueChange)="search = $event"></app-search-box>
-        <app-dropdown label="Category" placeholder="All categories" [options]="categories" optionLabel="name"
-            optionValue="id" [value]="selectedCategoryId" (valueChange)="selectedCategoryId = $event"></app-dropdown>
+        <app-search-box placeholder="Search jewellery..." [value]="search" (valueChange)="search = $event"></app-search-box>
+        <app-dropdown label="Category" placeholder="All categories" [options]="categories" optionLabel="name" optionValue="id"
+            [value]="selectedCategoryId" (valueChange)="selectedCategoryId = $event"></app-dropdown>
         <app-dropdown label="Sort by" [options]="sortOptions" optionLabel="label" optionValue="value" [value]="sortBy"
             (valueChange)="sortBy = $event"></app-dropdown>
-        <app-button text="Search collection" icon="search" (clicked)="applyFilters()">
-        </app-button>
+        <app-button text="Search collection" icon="search" (clicked)="applyFilters()"></app-button>
     </section>
 
     @if (errorMessage) {
@@ -21,40 +19,41 @@
     } @else if (isLoading && products.length === 0) {
     <p class="status">Loading collection...</p>
     } @else {
+    <div class="user-products-toolbar">
+        <p class="user-products-count"><strong>{{ products.length }}</strong> pieces on this page</p>
+        @if (search || selectedCategoryId || sortBy !== 'newest') {<p class="user-products-count">Filters applied</p>}
+    </div>
+
+    @if (products.length > 0) {
     <div class="user-product-grid">
         @for (product of products; track product.id) {
         <a class="user-product-card" [routerLink]="['/products', product.id]">
-            @if (product.images[0]; as image) {
-            <img [src]="image.imageUrl | assetUrl" [alt]="product.name" width="420" height="300" loading="lazy">
-            } @else {
-            <div class="product-placeholder">AdornMe</div>
-            }
-            <div class="product-info">
-                <span>{{ product.categoryName }}</span>
+            <div class="user-product-media">
+                @if (product.images[0]; as image) {
+                <img [src]="image.imageUrl | assetUrl" [alt]="product.name" width="420" height="520" loading="lazy">
+                } @else { <div class="product-placeholder">AdornMe</div> }
+                @if (product.discountPercentage > 0) {<span class="user-product-badge">{{ product.discountPercentage }}% OFF</span>}
+            </div>
+            <div class="user-product-info">
+                <p class="user-product-category">{{ product.categoryName }}</p>
                 <h2>{{ product.name }}</h2>
-                <div>
+                <div class="user-product-price">
                     <strong>₹{{ product.sellingPrice }}</strong>
-                    @if (product.discountPercentage > 0) {
-                    <del>₹{{ product.originalPrice }}</del>
-                    <small>{{ product.discountPercentage }}% OFF</small>
-                    }
-                    <small>{{ product.stockQuantity > 0 ? 'Available' : 'Sold out' }}</small>
+                    @if (product.discountPercentage > 0) {<del>₹{{ product.originalPrice }}</del><small>Save {{ product.discountPercentage }}%</small>}
                 </div>
+                <p class="user-product-stock" [class.sold-out]="product.stockQuantity <= 0">{{ product.stockQuantity > 0 ? 'In stock' : 'Sold out' }}</p>
             </div>
         </a>
         }
     </div>
+    } @else { <p class="status">No pieces found. Try another search or category.</p> }
 
-    @if (products.length === 0) {
-    <p class="status">No products found.</p>
-    }
-
-    <div class="pagination">
-        <app-button text="Previous" appearance="stroked" (clicked)="previousPage()" [disabled]="pageNumber === 1">
-        </app-button>
+    @if (totalPages > 1) {
+    <nav class="pagination" aria-label="Product pages">
+        <app-button text="Previous" appearance="stroked" (clicked)="previousPage()" [disabled]="pageNumber === 1"></app-button>
         <span>Page {{ pageNumber }} of {{ totalPages }}</span>
-        <app-button text="Next" appearance="stroked" (clicked)="nextPage()" [disabled]="pageNumber >= totalPages">
-        </app-button>
-    </div>
+        <app-button text="Next" appearance="stroked" (clicked)="nextPage()" [disabled]="pageNumber >= totalPages"></app-button>
+    </nav>
+    }
     }
 </main>

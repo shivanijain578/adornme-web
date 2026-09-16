@@ -1,0 +1,10 @@
+/* AdornMe-wide visual language. Keep page-specific SCSS focused on layout and behavior. */
+h1,h2,h3,h4 { font-weight:400; letter-spacing:-.018em; }
+button,a,.card,.form-card,.form-section,input,select,textarea { transition: border-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal), opacity var(--transition-fast); }
+button:not(:disabled):hover { transform:translateY(-1px); }
+.card:hover,.form-card:hover { transform:translateY(-2px); }
+.page,.page-container { width:min(var(--page-max),calc(100% - 48px)); }
+.page-title { font-weight:400; letter-spacing:-.025em; }
+.eyebrow { font-weight:400; }
+@media (max-width:600px) { .page,.page-container { width:min(var(--page-max),calc(100% - 28px)); } .page-title { font-size:clamp(2rem,10vw,3rem); } }
+@media (prefers-reduced-motion:reduce) { button,a,.card,.form-card,.form-section,input,select,textarea { transition:none!important; } }

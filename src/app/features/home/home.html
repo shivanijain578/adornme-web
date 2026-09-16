@@ -1,40 +1,78 @@
 <main class="home-page">
     @if (banners.length > 0) {
-    <section class="hero" aria-label="Featured offers">
+    <section class="hero" aria-label="Featured collection">
         @if (banners[activeBannerIndex]; as banner) {
-        <img class="hero-image" [src]="banner.imageUrl | assetUrl" [alt]="banner.title" width="1920" height="820">
+        <img class="hero-image" [src]="banner.imageUrl | assetUrl" [alt]="banner.title || 'AdornMe collection'" width="1920" height="820">
         <div class="hero-shade"></div>
         @if (banner.title || banner.linkUrl) {
-        <div class="hero-content"><span class="hero-kicker">ADORNME EDIT</span>@if (banner.title) {<h1>{{ banner.title }}</h1>}@if (banner.linkUrl) {<a class="hero-button" [href]="banner.linkUrl">Shop the edit <span>↗</span></a>}</div>
+        <div class="hero-content">
+            <span class="hero-kicker">ADORNME</span>
+            @if (banner.title) { <h1>{{ banner.title }}</h1> }
+            @if (banner.linkUrl) { <a class="hero-button" [href]="banner.linkUrl">Explore <span>↗</span></a> }
+        </div>
         }
         @if (banners.length > 1) {
-        <div class="hero-controls"><button type="button" class="hero-arrow" aria-label="Previous banner" (click)="previousBanner()">←</button><div class="hero-dots">@for (item of banners; track item.id; let index = $index) {<button type="button" [attr.aria-label]="'Show banner ' + (index + 1)" [attr.aria-current]="index === activeBannerIndex ? 'true' : null" (click)="selectBanner(index)"></button>}</div><button type="button" class="hero-arrow" aria-label="Next banner" (click)="nextBanner()">→</button></div>
+        <div class="hero-controls">
+            <button type="button" class="hero-arrow" aria-label="Previous banner" (click)="previousBanner()">←</button>
+            <div class="hero-dots">@for (item of banners; track item.id; let index = $index) {<button type="button" [attr.aria-label]="'Show banner ' + (index + 1)" [attr.aria-current]="index === activeBannerIndex ? 'true' : null" (click)="selectBanner(index)"></button>}</div>
+            <button type="button" class="hero-arrow" aria-label="Next banner" (click)="nextBanner()">→</button>
+        </div>
         }
         }
     </section>
     }
 
     <section class="home-search-section" aria-labelledby="home-search-title">
-        <div class="home-search-copy"><p class="home-search-eyebrow">Explore the collection</p><h2 id="home-search-title">Find your next favourite piece.</h2></div>
+        <div class="home-search-copy">
+            <p class="home-search-eyebrow">Explore AdornMe</p>
+            <h2 id="home-search-title">Find a piece that feels like you.</h2>
+        </div>
         <form class="home-search" (submit)="$event.preventDefault(); searchProducts()">
             <span class="home-search-icon" aria-hidden="true">⌕</span>
-            <input type="search" name="search" [value]="searchTerm" (input)="searchTerm = $any($event.target).value" placeholder="Search jewellery, earrings, rings..." aria-label="Search jewellery">
+            <input type="search" name="search" [value]="searchTerm" (input)="searchTerm = $any($event.target).value" placeholder="Search the collection..." aria-label="Search jewellery">
             <button type="submit">Search <span>↗</span></button>
         </form>
-        <div class="home-search-links" aria-label="Popular searches"><span>Popular:</span><button type="button" (click)="searchTerm = 'Rings'; searchProducts()">Rings</button><button type="button" (click)="searchTerm = 'Earrings'; searchProducts()">Earrings</button><button type="button" (click)="searchTerm = 'Necklace'; searchProducts()">Necklaces</button><button type="button" (click)="searchTerm = 'Bracelet'; searchProducts()">Bracelets</button></div>
     </section>
 
+    @if (categories.length > 0) {
     <section class="categories-section" aria-labelledby="categories-title">
-        <div class="collection-heading"><p id="categories-title">EVERYDAY DEMIFINE® COLLECTION</p></div>
-        @if (categories.length === 0 && !isLoading) {<p class="empty-state">Categories will appear here soon.</p>} @else {
-        <div class="category-grid">@for (category of categories; track category.id) {<a class="category-card" [routerLink]="['/products']" [queryParams]="{ categoryId: category.id }"><div class="category-image-wrap">@if (category.imageUrl) {<img class="category-image" [src]="category.imageUrl | assetUrl" [alt]="category.name" width="260" height="260" loading="lazy">} @else {<div class="category-image category-placeholder" aria-hidden="true">AdornMe</div>}</div><span class="category-name">{{ category.name }}</span></a>}</div>}
+        <div class="collection-heading"><p id="categories-title">Shop by collection</p><a routerLink="/products" class="shop-link">View all <span>↗</span></a></div>
+        <div class="category-grid">@for (category of categories; track category.id) {
+            <a class="category-card" [routerLink]="['/products']" [queryParams]="{ categoryId: category.id }">
+                <div class="category-image-wrap">
+                    @if (category.imageUrl) { <img class="category-image" [src]="category.imageUrl | assetUrl" [alt]="category.name" width="260" height="260" loading="lazy"> }
+                    @else { <div class="category-image category-placeholder" aria-hidden="true">{{ category.name }}</div> }
+                </div>
+                <span class="category-name">{{ category.name }}</span>
+            </a>
+        }</div>
     </section>
+    }
 
+    @if (!isLoading && bestsellers.length > 0) {
     <section class="products-section" aria-labelledby="styles-title">
-        <div class="collection-heading product-section-heading"><p id="styles-title">PALMONAS TOP STYLES</p><a routerLink="/products" class="shop-link">Shop all <span>↗</span></a></div>
-        @if (errorMessage) {<div class="error-state" role="alert"><span>Something went wrong.</span><small>{{ errorMessage }}</small></div>} @else if (!isLoading && bestsellers.length === 0) {<p class="empty-state">No pieces are available right now.</p>} @else if (!isLoading) {
-        <div class="product-carousel" aria-label="Best selling products">@for (product of bestsellers; track product.id) {<article class="product-card"><a class="product-link" [routerLink]="['/products', product.id]"><div class="product-visual">@if (product.images.length > 0) {<img class="product-image" [src]="product.images[getProductImageIndex(product)].imageUrl | assetUrl" [alt]="product.name" width="600" height="700" loading="lazy">} @else {<div class="product-placeholder">AdornMe</div>}@if (product.discountPercentage > 0) {<span class="discount-badge">{{ product.discountPercentage }}% OFF</span>}@if (product.images.length > 1) {<button type="button" class="image-arrow image-arrow-prev" aria-label="Previous product image" (click)="showPreviousProductImage(product, $event)">‹</button><button type="button" class="image-arrow image-arrow-next" aria-label="Next product image" (click)="showNextProductImage(product, $event)">›</button><div class="image-dots" aria-label="Product images">@for (image of product.images; track image.id; let imageIndex = $index) {<button type="button" [class.active]="getProductImageIndex(product) === imageIndex" [attr.aria-label]="'Show image ' + (imageIndex + 1)" (click)="selectProductImage(product, imageIndex, $event)"></button>}</div>}</div><div class="product-info"><p class="product-category">{{ product.categoryName }}</p><h3>{{ product.name }}</h3><div class="price-row"><strong>₹{{ product.sellingPrice }}</strong>@if (product.discountPercentage > 0) {<del>₹{{ product.originalPrice }}</del>}</div></div></a></article>}</div>}
+        <div class="collection-heading product-section-heading"><p id="styles-title">Featured pieces</p><a routerLink="/products" class="shop-link">Shop all <span>↗</span></a></div>
+        <div class="product-carousel" aria-label="Featured products">@for (product of bestsellers; track product.id) {
+            <article class="product-card">
+                <a class="product-link" [routerLink]="['/products', product.id]">
+                    <div class="product-visual">
+                        @if (product.images.length > 0) { <img class="product-image" [src]="product.images[getProductImageIndex(product)].imageUrl | assetUrl" [alt]="product.name" width="600" height="700" loading="lazy"> }
+                        @else { <div class="product-placeholder">AdornMe</div> }
+                        @if (product.discountPercentage > 0) { <span class="discount-badge">{{ product.discountPercentage }}% OFF</span> }
+                        @if (product.images.length > 1) {
+                        <button type="button" class="image-arrow image-arrow-prev" aria-label="Previous product image" (click)="showPreviousProductImage(product, $event)">‹</button>
+                        <button type="button" class="image-arrow image-arrow-next" aria-label="Next product image" (click)="showNextProductImage(product, $event)">›</button>
+                        <div class="image-dots" aria-label="Product images">@for (image of product.images; track image.id; let imageIndex = $index) {<button type="button" [class.active]="getProductImageIndex(product) === imageIndex" [attr.aria-label]="'Show image ' + (imageIndex + 1)" (click)="selectProductImage(product, imageIndex, $event)"></button>}</div>
+                        }
+                    </div>
+                    <div class="product-info"><p class="product-category">{{ product.categoryName }}</p><h3>{{ product.name }}</h3><div class="price-row"><strong>₹{{ product.sellingPrice }}</strong>@if (product.discountPercentage > 0) {<del>₹{{ product.originalPrice }}</del>}</div></div>
+                </a>
+            </article>
+        }</div>
     </section>
-    <section class="brand-strip" aria-label="AdornMe"><span>adornme</span><span>DETAILS MATTER</span><b>✦</b><span>WEAR YOUR STORY</span><b>✦</b><span>MADE FOR EVERY DAY</span></section>
-    <section class="shop-cta"><div><span>Your next favourite piece</span><h2>Find something<br><em>made for you.</em></h2><a class="cta-button" routerLink="/products">Explore jewellery <span>↗</span></a></div></section>
+    }
+
+    @if (errorMessage) { <section class="error-state" role="alert"><span>We couldn't load the collection.</span><small>{{ errorMessage }}</small></section> }
+
+    <section class="shop-cta"><div><span>AdornMe</span><h2>Jewellery for<br><em>your everyday.</em></h2><a class="cta-button" routerLink="/products">Explore jewellery <span>↗</span></a></div></section>
 </main>

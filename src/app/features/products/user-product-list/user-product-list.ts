@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Product } from '../../../core/models/Product/product.model';
 import { Category } from '../../../core/models/Category/category.model';
 import { ProductService } from '../../../core/services/Product/product.service';
@@ -9,6 +9,7 @@ import { AppButton } from '../../../shared/components/Basic_Material_wrappers/ap
 import { AppDropdown } from '../../../shared/components/Basic_Material_wrappers/app-dropdown/app-dropdown';
 import { AppSearchBox } from '../../../shared/components/Basic_Material_wrappers/app-search-box/app-search-box';
 import { AssetUrlPipe } from '../../../shared/pipes/asset-url.pipe';
+
 @Component({
   selector: 'app-user-product-list',
   imports: [FormsModule, RouterModule, AppButton, AppDropdown, AppSearchBox, AssetUrlPipe],
@@ -20,14 +21,13 @@ export class UserProductList implements OnInit
   private readonly productService = inject(ProductService);
   private readonly categoryService = inject(CategoryService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
 
   products: Product[] = [];
   categories: Category[] = [];
   search = '';
   selectedCategoryId?: number;
-  minPrice?: number;
-  maxPrice?: number;
   sortBy = 'newest';
   readonly sortOptions = [
     { label: 'Newest', value: 'newest' },
@@ -38,23 +38,39 @@ export class UserProductList implements OnInit
   pageNumber = 1;
   pageSize = 12;
   totalPages = 0;
+  totalItems = 0;
   isLoading = false;
   errorMessage = '';
 
   ngOnInit(): void
   {
-    const categoryId = Number(
-      this.route.snapshot.queryParamMap.get('categoryId')
-    );
-    this.selectedCategoryId = categoryId || undefined;
+    this.route.queryParamMap.subscribe(params =>
+    {
+      this.search = params.get('search')?.trim() ?? '';
+      const categoryId = Number(params.get('categoryId'));
+      this.selectedCategoryId = categoryId || undefined;
+      this.pageNumber = 1;
+      this.loadProducts();
+    });
+
     this.loadCategories();
-    this.loadProducts();
   }
 
   applyFilters(): void
   {
-    this.pageNumber = 1;
-    this.loadProducts();
+    const queryParams: Record<string, string | number> = {};
+    if (this.search.trim()) queryParams['search'] = this.search.trim();
+    if (this.selectedCategoryId) queryParams['categoryId'] = this.selectedCategoryId;
+    this.router.navigate(['/products'], { queryParams });
+  }
+
+  clearFilters(): void
+  {
+    this.search = '';
+    this.selectedCategoryId = undefined;
+    this.sortBy = 'newest';
+    this.sortDescending = true;
+    this.router.navigate(['/products']);
   }
 
   nextPage(): void
@@ -63,6 +79,7 @@ export class UserProductList implements OnInit
     {
       this.pageNumber++;
       this.loadProducts();
+      this.scrollToTop();
     }
   }
 
@@ -72,7 +89,13 @@ export class UserProductList implements OnInit
     {
       this.pageNumber--;
       this.loadProducts();
+      this.scrollToTop();
     }
+  }
+
+  trackByProduct(_: number, product: Product): number
+  {
+    return product.id;
   }
 
   private loadProducts(): void
@@ -83,8 +106,6 @@ export class UserProductList implements OnInit
     this.productService.getProducts({
       search: this.search || undefined,
       categoryId: this.selectedCategoryId,
-      minPrice: this.minPrice,
-      maxPrice: this.maxPrice,
       sortBy: this.sortBy,
       sortDescending: this.sortDescending,
       pageNumber: this.pageNumber,
@@ -94,6 +115,7 @@ export class UserProductList implements OnInit
       {
         this.products = response.items;
         this.totalPages = response.totalPages;
+        this.totalItems = response.totalCount ?? response.items.length;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -111,7 +133,7 @@ export class UserProductList implements OnInit
     this.categoryService.getCategories().subscribe({
       next: categories =>
       {
-        this.categories = categories;
+        this.categories = categories.filter(category => category.isVisible !== false);
         this.cdr.detectChanges();
       },
       error: () =>
@@ -120,5 +142,10 @@ export class UserProductList implements OnInit
         this.cdr.detectChanges();
       }
     });
+  }
+
+  private scrollToTop(): void
+  {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

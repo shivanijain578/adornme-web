@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/Product/product.service';
 import { ProductDetail, ProductSummary } from '../../../core/models/Product/product.model';
 import { AuthService } from '../../../core/services/Auth/auth.service';
@@ -16,6 +16,7 @@ import { AssetUrlPipe } from '../../../shared/pipes/asset-url.pipe';
 export class ProductDetails implements OnInit, OnDestroy
 {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly productService = inject(ProductService);
   private readonly authService = inject(AuthService);
   private readonly customerService = inject(CustomerService);
@@ -89,6 +90,16 @@ export class ProductDetails implements OnInit, OnDestroy
     });
   }
 
+  requireLogin(): void
+  {
+    if (this.isLoggedIn) return;
+
+    const returnUrl = this.router.url;
+    this.router.navigate(['/login'], {
+      queryParams: { returnUrl }
+    });
+  }
+
   showPreviousImage(): void
   {
     const count = this.product?.images?.length ?? 0;
@@ -134,14 +145,8 @@ export class ProductDetails implements OnInit, OnDestroy
 
     if (Math.abs(distance) < 45) return;
 
-    if (distance > 0)
-    {
-      this.showPreviousImage();
-    }
-    else
-    {
-      this.showNextImage();
-    }
+    if (distance > 0) this.showPreviousImage();
+    else this.showNextImage();
   }
 
   private startImageRotation(): void
@@ -180,7 +185,15 @@ export class ProductDetails implements OnInit, OnDestroy
 
   addToCart(): void
   {
-    if (!this.product || this.isCartSaving) return;
+    if (!this.product) return;
+
+    if (!this.isLoggedIn)
+    {
+      this.requireLogin();
+      return;
+    }
+
+    if (this.isCartSaving) return;
 
     this.isCartSaving = true;
     this.actionMessage = '';
@@ -204,7 +217,15 @@ export class ProductDetails implements OnInit, OnDestroy
 
   toggleWishlist(): void
   {
-    if (!this.product || this.isWishlistSaving) return;
+    if (!this.product) return;
+
+    if (!this.isLoggedIn)
+    {
+      this.requireLogin();
+      return;
+    }
+
+    if (this.isWishlistSaving) return;
 
     this.isWishlistSaving = true;
     this.actionMessage = '';

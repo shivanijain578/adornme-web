@@ -25,7 +25,6 @@
                     aria-label="Previous product image" (click)="showPreviousImage()">‹</button>
                 <button type="button" class="product-gallery-arrow product-gallery-arrow-next"
                     aria-label="Next product image" (click)="showNextImage()">›</button>
-
                 <div class="product-gallery-counter" aria-live="polite">
                     {{ activeImageIndex + 1 }} / {{ product.images.length }}
                 </div>
@@ -65,16 +64,10 @@
             @if (product.material || product.gender) {
             <dl class="product-specifications">
                 @if (product.material) {
-                <div>
-                    <dt>Material</dt>
-                    <dd>{{ product.material }}</dd>
-                </div>
+                <div><dt>Material</dt><dd>{{ product.material }}</dd></div>
                 }
                 @if (product.gender) {
-                <div>
-                    <dt>For</dt>
-                    <dd>{{ product.gender }}</dd>
-                </div>
+                <div><dt>For</dt><dd>{{ product.gender }}</dd></div>
                 }
             </dl>
             }
@@ -87,25 +80,23 @@
             </div>
 
             <div class="product-actions">
-                @if (isLoggedIn && product.stockQuantity > 0) {
+                @if (product.stockQuantity > 0) {
                 <app-button text="Add to Cart" icon="shopping_bag" [loading]="isCartSaving" [disabled]="isCartSaving"
                     (clicked)="addToCart()">
                 </app-button>
-                } @else if (isLoggedIn) {
+                } @else {
                 <app-button text="Out of Stock" [disabled]="true" appearance="stroked">
                 </app-button>
                 }
 
-                @if (isLoggedIn) {
                 <app-button [text]="isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'"
                     [icon]="isInWishlist ? 'favorite' : 'favorite_border'" appearance="stroked" [loading]="isWishlistSaving"
                     [disabled]="isWishlistSaving" (clicked)="toggleWishlist()">
                 </app-button>
-                }
             </div>
 
             @if (!isLoggedIn) {
-            <p class="product-login-note">Sign in to add this piece to your cart or wishlist.</p>
+            <p class="product-login-note">Sign in to continue. You'll be taken to login when you choose an action.</p>
             }
 
             @if (actionMessage) {

@@ -1,57 +1,66 @@
-<div class="product-details-container">
-
+<main class="product-details-page">
     @if (isLoading) {
-
-    <p>Loading product...</p>
-
+    <section class="product-details-state loading-state" aria-live="polite">
+        <p>Loading product...</p>
+    </section>
     } @else if (errorMessage) {
-
-    <div class="error">
-        {{ errorMessage }}
-    </div>
-
+    <section class="product-details-state error-state" role="alert">
+        <p>{{ errorMessage }}</p>
+        <a routerLink="/products" class="btn-secondary">Back to Products</a>
+    </section>
     } @else if (product) {
-
-    <div class="product-details">
-
-        <div class="product-image">
-
-            @if (product.images[0]; as image) {
-
-            <img [src]="image.imageUrl | assetUrl" [alt]="product.name" width="640" height="520">
-
-            } @else {
-
-            <div class="no-image">
-                No Image Available
-            </div>
-
-            }
-
-        </div>
-
-        <div class="product-info">
-
-            <p class="category">
-                {{ product.categoryName }}
-            </p>
-
-            <h1>
-                {{ product.name }}
-            </h1>
-
-            <div class="price-block">
-                <h2>₹{{ product.sellingPrice }}</h2>
-                @if (product.discountPercentage > 0) {
-                <del>₹{{ product.originalPrice }}</del>
-                <span>{{ product.discountPercentage }}% OFF</span>
+    <section class="product-details-layout" aria-label="Product details">
+        <div class="product-gallery" aria-label="Product images" (touchstart)="onGalleryTouchStart($event)"
+            (touchend)="onGalleryTouchEnd($event)">
+            <div class="product-gallery-main">
+                @if (product.images[activeImageIndex]; as image) {
+                <img class="product-gallery-image" [src]="image.imageUrl | assetUrl"
+                    [alt]="product.name + ' image ' + (activeImageIndex + 1)" width="900" height="900" fetchpriority="high">
                 } @else {
+                <div class="product-gallery-placeholder">AdornMe</div>
+                }
+
+                @if (product.images.length > 1) {
+                <button type="button" class="product-gallery-arrow product-gallery-arrow-prev"
+                    aria-label="Previous product image" (click)="showPreviousImage()">‹</button>
+                <button type="button" class="product-gallery-arrow product-gallery-arrow-next"
+                    aria-label="Next product image" (click)="showNextImage()">›</button>
+
+                <div class="product-gallery-counter" aria-live="polite">
+                    {{ activeImageIndex + 1 }} / {{ product.images.length }}
+                </div>
                 }
             </div>
 
-            <p class="description">
-                {{ product.description }}
-            </p>
+            @if (product.images.length > 1) {
+            <div class="product-gallery-thumbnails" aria-label="Choose product image">
+                @for (image of product.images; track image.id; let index = $index) {
+                <button type="button" class="product-gallery-thumbnail" [class.active]="activeImageIndex === index"
+                    [attr.aria-label]="'Show product image ' + (index + 1)"
+                    [attr.aria-current]="activeImageIndex === index ? 'true' : null" (click)="selectImage(index)">
+                    <img [src]="image.imageUrl | assetUrl" [alt]="product.name + ' thumbnail ' + (index + 1)" width="120" height="120"
+                        loading="lazy">
+                </button>
+                }
+            </div>
+            <p class="product-gallery-hint">Images change automatically · swipe to browse</p>
+            }
+        </div>
+
+        <div class="product-details-info">
+            <a routerLink="/products" class="product-back-link">← Back to Products</a>
+            <p class="product-details-eyebrow">{{ product.categoryName }}</p>
+            <h1>{{ product.name }}</h1>
+
+            <div class="product-price-block">
+                <strong>₹{{ product.sellingPrice }}</strong>
+                @if (product.discountPercentage > 0) {
+                <del>₹{{ product.originalPrice }}</del>
+                <span>{{ product.discountPercentage }}% OFF</span>
+                }
+            </div>
+
+            <p class="product-description">{{ product.description }}</p>
 
             @if (product.material || product.gender) {
             <dl class="product-specifications">
@@ -70,31 +79,33 @@
             </dl>
             }
 
-            <p>
-                Available stock:
-                <strong>
-                    {{ product.stockQuantity }}
+            <div class="product-stock">
+                <span>Availability</span>
+                <strong [class.out-of-stock]="product.stockQuantity <= 0">
+                    {{ product.stockQuantity > 0 ? 'In stock' : 'Out of stock' }}
                 </strong>
-            </p>
+            </div>
 
-            @if (isLoggedIn && product.stockQuantity > 0) {
+            <div class="product-actions">
+                @if (isLoggedIn && product.stockQuantity > 0) {
+                <app-button text="Add to Cart" icon="shopping_bag" [loading]="isCartSaving" [disabled]="isCartSaving"
+                    (clicked)="addToCart()">
+                </app-button>
+                } @else if (isLoggedIn) {
+                <app-button text="Out of Stock" [disabled]="true" appearance="stroked">
+                </app-button>
+                }
 
-            <app-button text="Add to Cart" icon="shopping_bag" [loading]="isCartSaving" [disabled]="isCartSaving"
-                (clicked)="addToCart()">
-            </app-button>
+                @if (isLoggedIn) {
+                <app-button [text]="isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'"
+                    [icon]="isInWishlist ? 'favorite' : 'favorite_border'" appearance="stroked" [loading]="isWishlistSaving"
+                    [disabled]="isWishlistSaving" (clicked)="toggleWishlist()">
+                </app-button>
+                }
+            </div>
 
-            } @else if (isLoggedIn) {
-
-            <app-button text="Out of Stock" [disabled]="true" appearance="stroked">
-            </app-button>
-
-            }
-
-            @if (isLoggedIn) {
-            <app-button [text]="isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'"
-                [icon]="isInWishlist ? 'favorite' : 'favorite_border'" appearance="stroked" [loading]="isWishlistSaving"
-                [disabled]="isWishlistSaving" (clicked)="toggleWishlist()">
-            </app-button>
+            @if (!isLoggedIn) {
+            <p class="product-login-note">Sign in to add this piece to your cart or wishlist.</p>
             }
 
             @if (actionMessage) {
@@ -102,45 +113,34 @@
             }
 
             @if (isAdmin) {
-            <a class="edit-product-link" [routerLink]="['/admin/products', product.id, 'edit']">
-                Edit product
-            </a>
+            <a class="edit-product-link" [routerLink]="['/admin/products', product.id, 'edit']">Edit product</a>
             }
-
-            <br>
-
-            <a routerLink="/products" class="back-link">
-
-                ← Back to Products
-
-            </a>
-
         </div>
-
-    </div>
-
+    </section>
     }
 
     @if (product && similarProducts.length > 0) {
-    <section class="similar-products" aria-labelledby="similar-products-title">
-        <div class="similar-heading">
+    <section class="similar-products-section" aria-labelledby="similar-products-title">
+        <div class="similar-products-heading">
             <div>
-                <p class="category">More from {{ product.categoryName }}</p>
+                <p class="product-details-eyebrow">More from {{ product.categoryName }}</p>
                 <h2 id="similar-products-title">You may also like.</h2>
             </div>
-            <a routerLink="/products" [queryParams]="{ categoryId: product.categoryId }">View category →</a>
+            <a routerLink="/products" [queryParams]="{ categoryId: product.categoryId }" class="product-category-link">View category →</a>
         </div>
 
-        <div class="similar-grid">
+        <div class="similar-products-grid">
             @for (similarProduct of similarProducts; track similarProduct.id) {
-            <a class="similar-card" [routerLink]="['/products', similarProduct.id]">
-                @if (similarProduct.images[0]; as image) {
-                <img [src]="image.imageUrl | assetUrl" [alt]="similarProduct.name" width="320" height="220"
-                    loading="lazy">
-                } @else {
-                <div class="similar-placeholder">AdornMe</div>
-                }
-                <div class="similar-card-info">
+            <a class="similar-product-card" [routerLink]="['/products', similarProduct.id]">
+                <div class="similar-product-image">
+                    @if (similarProduct.images[0]; as image) {
+                    <img [src]="image.imageUrl | assetUrl" [alt]="similarProduct.name" width="420" height="520" loading="lazy">
+                    } @else {
+                    <div class="similar-product-placeholder">AdornMe</div>
+                    }
+                </div>
+                <div class="similar-product-info">
+                    <p>{{ similarProduct.categoryName }}</p>
                     <h3>{{ similarProduct.name }}</h3>
                     <strong>₹{{ similarProduct.sellingPrice }}</strong>
                 </div>
@@ -149,5 +149,4 @@
         </div>
     </section>
     }
-
-</div>
+</main>

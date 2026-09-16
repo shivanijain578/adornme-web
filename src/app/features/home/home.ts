@@ -23,8 +23,8 @@ export class Home implements OnInit, OnDestroy
   isLoading = true;
   errorMessage = '';
 
-  // Each product keeps its own active image so every card can be browsed independently.
   private readonly productImageIndexes = new Map<number, number>();
+  private readonly productImageTimers = new Map<number, ReturnType<typeof setInterval>>();
   private bannerTimer?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void
@@ -32,18 +32,26 @@ export class Home implements OnInit, OnDestroy
     this.productService.getHome().subscribe({
       next: response =>
       {
+        this.clearProductImageTimers();
         this.categories = response.categories ?? [];
         this.bestsellers = response.bestSellers ?? [];
         this.banners = response.banners ?? [];
         this.activeBannerIndex = 0;
         this.productImageIndexes.clear();
-        this.bestsellers.forEach(product => this.productImageIndexes.set(product.id, 0));
+
+        this.bestsellers.forEach(product =>
+        {
+          this.productImageIndexes.set(product.id, 0);
+          this.startProductImageRotation(product);
+        });
+
         this.isLoading = false;
         this.startBannerRotation();
         this.cdr.detectChanges();
       },
       error: () =>
       {
+        this.clearProductImageTimers();
         this.errorMessage = 'Unable to load the collection. Please try again.';
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -70,6 +78,7 @@ export class Home implements OnInit, OnDestroy
 
     const current = this.getProductImageIndex(product);
     this.productImageIndexes.set(product.id, (current - 1 + count) % count);
+    this.restartProductImageRotation(product);
     this.cdr.detectChanges();
   }
 
@@ -83,6 +92,7 @@ export class Home implements OnInit, OnDestroy
 
     const current = this.getProductImageIndex(product);
     this.productImageIndexes.set(product.id, (current + 1) % count);
+    this.restartProductImageRotation(product);
     this.cdr.detectChanges();
   }
 
@@ -90,7 +100,12 @@ export class Home implements OnInit, OnDestroy
   {
     event.preventDefault();
     event.stopPropagation();
+
+    const count = product.images?.length ?? 0;
+    if (index < 0 || index >= count) return;
+
     this.productImageIndexes.set(product.id, index);
+    this.restartProductImageRotation(product);
     this.cdr.detectChanges();
   }
 
@@ -115,12 +130,45 @@ export class Home implements OnInit, OnDestroy
 
   selectBanner(index: number): void
   {
+    if (index < 0 || index >= this.banners.length) return;
+
     this.activeBannerIndex = index;
     this.restartBannerRotation();
   }
 
+  private startProductImageRotation(product: ProductSummary): void
+  {
+    const count = product.images?.length ?? 0;
+    if (count <= 1) return;
+
+    const delay = 3000 + (product.id % 4) * 450;
+    const timer = setInterval(() =>
+    {
+      const current = this.getProductImageIndex(product);
+      this.productImageIndexes.set(product.id, (current + 1) % count);
+      this.cdr.detectChanges();
+    }, delay);
+
+    this.productImageTimers.set(product.id, timer);
+  }
+
+  private restartProductImageRotation(product: ProductSummary): void
+  {
+    const existing = this.productImageTimers.get(product.id);
+    if (existing) clearInterval(existing);
+
+    this.startProductImageRotation(product);
+  }
+
+  private clearProductImageTimers(): void
+  {
+    this.productImageTimers.forEach(timer => clearInterval(timer));
+    this.productImageTimers.clear();
+  }
+
   private startBannerRotation(): void
   {
+    if (this.bannerTimer) clearInterval(this.bannerTimer);
     if (this.banners.length <= 1) return;
 
     this.bannerTimer = setInterval(() =>
@@ -132,12 +180,12 @@ export class Home implements OnInit, OnDestroy
 
   private restartBannerRotation(): void
   {
-    if (this.bannerTimer) clearInterval(this.bannerTimer);
     this.startBannerRotation();
   }
 
   ngOnDestroy(): void
   {
     if (this.bannerTimer) clearInterval(this.bannerTimer);
+    this.clearProductImageTimers();
   }
 }
